@@ -9,3 +9,4 @@ class QuestionAnswers(models.Model):
     answer=fields.Text(required=True,string="Answer")
 
     number_of_calls=fields.Integer()
+    cost=fields.Float(string="Cost")

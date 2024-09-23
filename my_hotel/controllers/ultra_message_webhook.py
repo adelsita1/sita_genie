@@ -15,6 +15,10 @@ class WhatsappUltraMessage(http.Controller):
             print(data)
             message_created=request.env["whatsapp_message_log"].sudo().create_message_received(data)
             print("message_created",message_created)
+            # if data["data"]["body"]:
+
+
+
         except Exception as e:
             print("exception is %s",e)
 

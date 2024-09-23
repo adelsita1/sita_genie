@@ -9,6 +9,7 @@
             <field name="model">ultra_message.account</field>
             <field name="arch" type="xml">
                 <tree string="UltraMessage Account" editable="bottom">
+                    <field name="name"/>
                     <field name="instance_id"/>
                     <field name="token" password="1"/>
                 </tree>

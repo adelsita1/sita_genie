@@ -62,6 +62,9 @@ class SendCustomMessage(models.TransientModel):
                 elif self.message_type=='document':
 
                     documentbase64 = urllib.parse.quote_plus(self.document)
+
+
+                    print("documentbase64",type(documentbase64))
                     if self.use_customer_name and self.predefined_initial_message:
                         if r.title:
                             caption = ('{} {} ' +self.predefined_initial_message ).format(r.title.shortcut,r.name) + ' '
@@ -75,7 +78,7 @@ class SendCustomMessage(models.TransientModel):
                     r.send_document_partner(r.mobile, caption,documentbase64,self.filename)
                     time.sleep(10)
                 messages_return = UltraMessageClass.get_message_status()
-                self.partner_ids.handel_sent_message(messages_return)
+                self.partner_ids.handel_sent_message(messages_return,account)
 
 
 

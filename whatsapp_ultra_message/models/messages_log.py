@@ -27,18 +27,23 @@ class WhatsApp(models.Model):
     @api.model
     def create_message_received(self,message_received):
         try:
-            account=self.env["ultra_message.account"].search([("instance_id","=",message_received["instanceId"])])
+            print("message_received",message_received)
+            print("message_received",message_received["instanceId"])
+            instance_id="instance"+message_received["instanceId"]
+            account=self.env["ultra_message.account"].search([("instance_id","=",instance_id)])
+            print("account",account)
+            hotel=self.env["hotel"].search([("account_id","=",account.id)])
             data = message_received["data"]
             mobile = data['from'][:-5]
             mobile2 = data['from'][1:-5]
-            partner_id = self.env['res.partner'].sudo().search(
+            partner = self.env['res.partner'].sudo().search(
                 [('mobile', 'in', [mobile, mobile2, '2' + mobile, '2' + mobile2])])
-            if partner_id:
+            if partner:
 
-                partner_id = partner_id[0].id
+                partner_id = partner[0].id
             else:
                 partner=self.env['res.partner'].sudo().create({
-                    'name':data["push_name"],
+                    'name':data["pushname"],
                     "mobile":data["mobile"],
                 })
 
@@ -56,6 +61,14 @@ class WhatsApp(models.Model):
 
             }
             self.env["whatsapp_message_log"].sudo().create(vals)
+
+            if   data["body"] in ["stop","quit","unsubscribe"]:
+                partner.unsubscribe_from_whatsapp_messages=True
+            answer=hotel.process_pdf(question=data["body"])
+            partner.send_message_partner(mobile,answer)
+
+
+
         except Exception as e:
             print("exception in create received",e)
             return False

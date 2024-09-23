@@ -30,7 +30,8 @@ class Partner(models.Model):
             if instance_ready:
                 message_state = UltraMessageClass.send_message(phone, message)
                 messages_return=UltraMessageClass.get_message_status()
-                self.handel_sent_message(messages_return)
+                print("messages_return",messages_return)
+                self.handel_sent_message(messages_return,account)
                 return message_state
 
             # print("message send state", message_state)
@@ -111,6 +112,7 @@ class Partner(models.Model):
     @api.model
     def handel_sent_message(self,messages,account):
         messages_to_create=[]
+        print("in  handel_sent_message")
         for mess in messages:
 
             message_exist = self.env['whatsapp_message_log'].search([('message_id', '=', mess['id'])], limit=1)

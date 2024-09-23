@@ -8,6 +8,7 @@
 			<field name="arch" type="xml">
 				<form string="ModelTitle">
 					<sheet>
+						<button name="process_pdf" type="object" string="process_pdf" class="btn btn-primary"/>
 						<div class="oe_title">
 							<label for="name"/>
 							<h1>
@@ -18,6 +19,8 @@
 							<group>
 								<field name="address"/>
 								<field name="pdf_ids" widget="many2many_tags"/>
+								<field name="account_id"/>
+<!--								<field name="chatbot_ai"/>-->
 							</group>
 							<group>
 								<field name="city"/>
