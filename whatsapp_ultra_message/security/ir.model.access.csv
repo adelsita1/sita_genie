@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_custom_message,access_custom_message,model_ultra_message_whatsapp_message,base.group_user,1,1,1,1
+access_custom_message_wizard,access_custom_message_wizard,model_whatsapp_ultra_message_send_whatsapp_message,base.group_user,1,1,1,1
+access_message_log,access_message_log,model_whatsapp_message_log,base.group_user,1,1,1,
+access_ultra_message_account,access_message_account,model_ultra_message_account,base.group_user,1,1,1,
+access_faq,access_faq,model_question_answer,base.group_user,1,1,1,
+

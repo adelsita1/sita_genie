@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+		<record id="messages_tree_view" model="ir.ui.view">
+			<field name="name">whatsapp_message_log.tree</field>
+			<field name="model">whatsapp_message_log</field>
+			<field name="arch" type="xml">
+				<tree string="Message History" create="0" edit="0"
+				decoration-info="status=='sent'" decoration-danger="status=='Invalid' or status=='invalid'">
+					<field name="message_id"/>
+					<field name="partner_id"/>
+					<field name="push_name"/>
+					<field name="direction"/>
+
+
+					<field name="mobile"/>
+					<field name="sent_from"/>
+					<field name="sent_datetime"/>
+					<field name="message_body"/>
+					<field name="status"/>
+
+
+				</tree>
+			</field>
+		</record>
+
+		<record id="sms_message_search_view" model="ir.ui.view">
+			<field name="name">whatsapp_message_log.search</field>
+			<field name="model">whatsapp_message_log</field>
+			<field name="arch" type="xml">
+				<search string="Message Logs">
+					<field name="partner_id"/>
+					<field name="message_body"/>
+
+					<field name="sent_datetime" type="date"/>
+					<filter string="Sent" name="sent" domain="[('status','=','sent')]"
+						        context="{}"/>
+					<filter string="Invalid" name="invalid" domain="[('status','=','invalid')]"
+						        context="{}"/>
+					<filter string="Sent Date" name="sent_datetime" domain="[]" context="{'group_by':'sent_datetime'}"/>
+					<group expand="1" string="Group By">
+						<filter string="Direction" name="direction" domain="[]"
+						        context="{'group_by':'direction'}"/>
+						<filter string="Receiver" name="receiver" domain="[]"
+						        context="{'group_by':'partner_id'}"/>
+
+
+						<filter string="state" name="state" domain="[]"
+						        context="{'group_by':'status'}"/>
+
+
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="whatsapp_messages_history_act_window" model="ir.actions.act_window">
+			<field name="name">WhatsApp Messages Log</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">whatsapp_message_log</field>
+
+			<field name="view_mode">tree</field>
+
+
+		</record>
+		<menuitem name="Messages History" id="message_log_menu" parent="whats_app_message_menu" sequence="1" action="whatsapp_messages_history_act_window"/>
+
+		<record model="ir.actions.server" id="server_action_get_messages_status">
+              <field name="name">Get Messages Status</field>
+
+              <field name="binding_model_id" ref="whatsapp_ultra_message.model_whatsapp_message_log"/>
+              <field name="model_id" ref="whatsapp_ultra_message.model_whatsapp_message_log"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">action = model.get_message_status()</field>
+        </record>
+	</data>
+</odoo>

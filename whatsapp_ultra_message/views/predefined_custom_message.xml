@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+		<record id="whats_app_message_form_view" model="ir.ui.view">
+			<field name="name">ultra_message.whats_app_message.form</field>
+			<field name="model">ultra_message.whatsapp_message</field>
+			<field name="arch" type="xml">
+				<form string="Whats APP Custom Message">
+					<sheet>
+						<div class="oe_title">
+							<label for="name"/>
+							<h1>
+								<field name="name" placeholder="Title"/>
+							</h1>
+						</div>
+						<group>
+
+
+						<group>
+							<field name="message_type"/>
+<!--"('message_type','not in',['text','Text'])"-->
+							<field name="message_text" invisible="message_type!='text'"/>
+<!--							-->
+							<field name="caption" invisible="message_type=='text'"/>
+							<field name="document" invisible="message_type!='document'"/>
+
+							<field name="filename" invisible="message_type!='document'"/>
+							<field name="image" invisible="message_type!='image'"/>
+
+							</group>
+							<group>
+
+
+							<field name="use_customer_name" widget="toggle_button"/>
+							<field name="predefined_initial_message" invisible="[('use_customer_name','!=',True)]" />
+						</group>
+
+
+						</group>
+
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="whats_app_message_tree_view" model="ir.ui.view">
+			<field name="name">ultra_message.whats_app_message.tree</field>
+			<field name="model">ultra_message.whatsapp_message</field>
+			<field name="arch" type="xml">
+				<tree string="Whatsapp Messages">
+					<field name="name"/>
+					<field name="message_type"/>
+					<field name="message_text"/>
+					<field name="caption"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="whats_app_message_search_view" model="ir.ui.view">
+			<field name="name">ultra_message.whats_app_message.search</field>
+			<field name="model">ultra_message.whatsapp_message</field>
+			<field name="arch" type="xml">
+				<search string="message">
+					<field name="name"/>
+					<field name="message_text"/>
+					<field name="caption"/>
+				</search>
+			</field>
+		</record>
+
+		<record id="whats_app_message_act_window" model="ir.actions.act_window">
+			<field name="name">Whats APP Message</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">ultra_message.whatsapp_message</field>
+			<field name="view_mode">tree,form,search</field>
+
+		</record>
+
+		<menuitem name="Messages" id="whats_app_message_menu" parent="whats_app_ultra_message"  sequence="150"/>
+		<menuitem name="Custom Messages" id="custom_message_ultra_message_settings" parent="whats_app_message_menu" sequence="2" action="whats_app_message_act_window"/>
+	</data>
+</odoo>

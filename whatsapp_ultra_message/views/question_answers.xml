@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="question_answer_form_view" model="ir.ui.view">
+            <field name="name">question_answer.form</field>
+            <field name="model">question_answer</field>
+            <field name="arch" type="xml">
+                <form string="FAQ">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="question"/>
+                            <h1>
+                                <field name="question" placeholder="Title"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="answer"/>
+                            </group>
+                            <group>
+                                <field name="number_of_calls"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="question_answer_tree_view" model="ir.ui.view">
+            <field name="name">question_answer.tree</field>
+            <field name="model">question_answer</field>
+            <field name="arch" type="xml">
+                <tree string="FAq">
+                    <field name="question"/>
+                    <field name="answer"/>
+                    <field name="number_of_calls"/>
+                </tree>
+            </field>
+        </record>
+
+
+
+        <record id="question_answer_act_window" model="ir.actions.act_window">
+            <field name="name">FAQ</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">question_answer</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem name="FAQ" id="question_answer_menu" parent="whats_app_message_menu" action="question_answer_act_window" sequence="3"/>
+
+    </data>
+</odoo>

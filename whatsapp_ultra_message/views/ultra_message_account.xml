@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+
+        <record id="ultra_message_tree_view" model="ir.ui.view">
+            <field name="name">ultra_message.account.tree</field>
+            <field name="model">ultra_message.account</field>
+            <field name="arch" type="xml">
+                <tree string="UltraMessage Account" editable="bottom">
+                    <field name="instance_id"/>
+                    <field name="token" password="1"/>
+                </tree>
+            </field>
+        </record>
+
+
+
+        <record id="ultra_message_account_act_window" model="ir.actions.act_window">
+            <field name="name">UltraMessage Account</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ultra_message.account</field>
+            <field name="view_mode">tree</field>
+        </record>
+        <menuitem name="whatsApp Messages" id="whats_app_ultra_message" sequence="2"/>
+	  <menuitem name="Configurations" id="configurations_ultra_message_settings" parent="whats_app_ultra_message" sequence="200"/>
+
+
+        <menuitem name="Ultra Message Account" id="ultra_message_account" parent="configurations_ultra_message_settings" action="ultra_message_account_act_window"/>
+
+    </data>
+</odoo>

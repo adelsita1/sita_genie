@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<data>
+
+		<record id="whatsapp_config_form_inherit" model="ir.ui.view">
+			<field name="name">res_config_settings_whatsapp.form</field>
+			<field name="model">res.config.settings</field>
+			<field name="inherit_id" ref="base.res_config_settings_view_form"/>
+			<field name="priority" eval="8"/>
+			<field name="arch" type="xml">
+				<xpath expr="//form" position="inside">
+                    <app data-string="ultra_message" string="UltraMessage WhatsApp" name="ultra_message whatsapp"  >
+						<block title="Ultra Message Configurations" id="ultra_message">
+							<setting id="ultra_message_instance" help="Instance Id For Ultra Message Account">
+								<field name="instance_id" />
+							</setting>
+
+							<setting id="ultra_message_token" help="Token For Ultra Message Account">
+								<field name="token"  password="1"/>
+							</setting>
+
+						</block>
+
+					</app>
+				</xpath>
+
+<!--				<xpath expr="//div[hasclass('settings')]" position="inside" >-->
+<!--                <div class="app_settings_block"-->
+<!--                     data-string="Ultra Message Configurations"-->
+<!--                     string="UltraMessage WhatsaApp Configuration"-->
+<!--                     data-key="whatsapp_ultra_message">-->
+
+<!--                    <h2>Ultra Message Configuration</h2>-->
+<!--                    <div class="row mt16 o_settings_container">-->
+<!--                        <div class="col-12 col-lg-6 o_setting_box">-->
+<!--                            <div class="o_setting_left_pane"/>-->
+
+<!--	                            <div class="o_setting_right_pane">-->
+<!--                                <field name="instance_id" />-->
+<!--                                <div class="text-muted">-->
+<!--                                    Instance Id-->
+<!--                                </div>-->
+
+<!--	                         </div>-->
+
+<!--                    </div>-->
+<!--                        <div class="col-12 col-lg-6 o_setting_box">-->
+<!--                            <div class="o_setting_left_pane"/>-->
+
+<!--	                            <div class="o_setting_right_pane">-->
+<!--                                <field name="token" password="1"/>-->
+<!--                                <div class="text-muted">-->
+<!--                                    Token-->
+<!--                                </div>-->
+
+<!--	                         </div>-->
+<!--                        </div>-->
+
+<!--                        </div>-->
+<!--                    </div>-->
+
+
+<!--            </xpath>-->
+        </field>
+    </record>
+
+		<record id="whatsapp_settings" model="ir.actions.act_window">
+			<field name="name">Settings</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">res.config.settings</field>
+			<field name="view_mode">form</field>
+			<field name="target">inline</field>
+			<field name="context">{'module' : 'whatsapp_ultra_message','bin_size':False}</field>
+		</record>
+		<menuitem name="whatsApp Messages" id="whats_app_ultra_message" sequence="2"/>
+	  <menuitem name="Configurations" id="configurations_ultra_message_settings" parent="whats_app_ultra_message" sequence="200"/>
+
+		<menuitem id="ultra_message_settings" name="Settings" parent="configurations_ultra_message_settings" sequence="100" action="whatsapp_settings"
+	groups="base.group_system"/>
+	</data>
+</odoo>

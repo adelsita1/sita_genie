@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+ <record model="ir.actions.server" id="server_action_send_message">
+              <field name="name">Send Custom  WhatsApp Message</field>
+              <field name="binding_model_id" ref="base.model_res_partner"/>
+              <field name="model_id" ref="base.model_res_partner"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="state">code</field>
+            <field name="code">action = records.send_custom_message()</field>
+        </record>
+
+	</data>
+</odoo>

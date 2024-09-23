@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+		<record id="hotel_form_view" model="ir.ui.view">
+			<field name="name">hotel.form</field>
+			<field name="model">hotel</field>
+			<field name="arch" type="xml">
+				<form string="ModelTitle">
+					<sheet>
+						<div class="oe_title">
+							<label for="name"/>
+							<h1>
+								<field name="name" placeholder="Hotel name"/>
+							</h1>
+						</div>
+						<group>
+							<group>
+								<field name="address"/>
+								<field name="pdf_ids" widget="many2many_tags"/>
+							</group>
+							<group>
+								<field name="city"/>
+							</group>
+						</group>
+					</sheet>
+					<div class="oe_chatter">
+						<field name="message_follower_ids"/>
+						<field name="activity_ids"/>
+						<field name="message_ids"/>
+					</div>
+				</form>
+			</field>
+		</record>
+
+		<record id="hotel_tree_view" model="ir.ui.view">
+			<field name="name">hotel.tree</field>
+			<field name="model">hotel</field>
+			<field name="arch" type="xml">
+				<tree string="hotel">
+					<field name="name"/>
+					<field name="address"/>
+					<field name="city"/>
+					<field name="pdf_ids" widget="many2many_tags"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="hotel_search_view" model="ir.ui.view">
+			<field name="name">hotel.search</field>
+			<field name="model">hotel</field>
+			<field name="arch" type="xml">
+				<search string="Hotel">
+					<field name="name"/>
+					<group expand="1" string="Group By">
+						<filter string="Hotel Name" name="name" domain="[]"
+						        context="{'group_by':'name'}"/>
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="hotel_act_window" model="ir.actions.act_window">
+			<field name="name">Hotel</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">hotel</field>
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					There is no hotels
+				</p>
+			</field>
+		</record>
+
+		<menuitem id="main_hotel" name="Hotel" web_icon="my_hotel,static/description/hotel_icon.png"/>
+		<menuitem id="my_hotel_options" name="Options" parent="main_hotel"/>
+		<menuitem name="Hotels" id="hotel_menu" parent="my_hotel_options" action="hotel_act_window"/>
+
+	</data>
+</odoo>

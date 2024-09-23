@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+		<record id="send_message_form_view" model="ir.ui.view">
+			<field name="name">whatsapp_custom.send_message_form</field>
+			<field name="model">whatsapp_ultra_message.send_whatsapp_message</field>
+			<field name="arch" type="xml">
+				<form string="Send Whats App Message" >
+
+					<sheet>
+						<div class="oe_title">
+							<label for="message_name" required="1"/>
+							<h1>
+								<field name="message_name" required="1"/>
+							</h1>
+						</div>
+						<group>
+							<group>
+
+								<field name="message_type"/>
+
+							<field name="message_text" invisible="[('message_type','!=','text')]"/>
+							<field name="caption" invisible="[('message_type','=','text')]"/>
+							<field name="document" invisible="[('message_type','!=','document')]"/>
+							<field name="filename" invisible="[('message_type','!=','document')]"/>
+							<field name="image" invisible="[('message_type','!=','image')]"/>
+							</group>
+							<group>
+								<field name="partner_ids" widget="many2many_tags"/>
+							</group>
+						</group>
+						 <footer>
+                            <button name="send_custom_whatsapp_message" string="Send Message" type="object" class="oe_highlight"/>
+
+                        </footer>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+
+
+
+		<record id="send_custom_message_act_window" model="ir.actions.act_window">
+			<field name="name">Send Custom Message WhatsApp</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">whatsapp_ultra_message.send_whatsapp_message</field>
+			<field name="view_mode">form</field>
+
+		</record>
+
+
+
+	</data>
+</odoo>
