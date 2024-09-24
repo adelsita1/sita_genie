@@ -129,7 +129,7 @@ class Partner(models.Model):
             if message_exist:
 
                 if message_exist.status not in ['sent', 'invalid'] or message_exist.partner_id == False:
-                    message_exist.write({
+                    message_exist.with_context(prefetch_fields=False).write({
                         "status": mess['status'],
                         'partner_id': partner_id,
                         'sent_datetime': datetime.fromtimestamp(mess['sent_at']) if 'sent_at' in mess and mess[
@@ -151,4 +151,4 @@ class Partner(models.Model):
                         'sent_at'] != None else False,
                     'message_body': mess['body']
                 })
-        self.env['whatsapp_message_log'].create(messages_to_create)
+        self.env['whatsapp_message_log'].with_context(prefetch_fields=False).create(messages_to_create)

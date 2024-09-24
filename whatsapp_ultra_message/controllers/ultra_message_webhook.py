@@ -10,7 +10,7 @@ class WhatsappUltraMessage(http.Controller):
             data = json.loads(request.httprequest.data)
             print(data)
         except Exception as e:
-            print("exception is %s",e)
+            print("exception is",e)
 
         return "Hello Youssef"
         # message_return = json.loads(request.body)

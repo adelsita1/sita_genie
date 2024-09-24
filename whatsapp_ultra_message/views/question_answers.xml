@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <form string="FAQ">
                     <sheet>
+<!--                        <button name="find_similar_question" string="find similar question" type="object" class="btn btn-primary"/>-->
                         <div class="oe_title">
                             <label for="question"/>
                             <h1>
@@ -19,6 +20,7 @@
                                 <field name="answer"/>
                             </group>
                             <group>
+                                <field name="similar_questions"/>
                                 <field name="number_of_calls"/>
                             </group>
                         </group>
@@ -33,7 +35,9 @@
             <field name="arch" type="xml">
                 <tree string="FAq">
                     <field name="question"/>
+                    <field name="similar_questions"/>
                     <field name="answer"/>
+
                     <field name="number_of_calls"/>
                 </tree>
             </field>

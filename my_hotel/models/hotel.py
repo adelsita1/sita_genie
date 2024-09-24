@@ -3,7 +3,7 @@ from ..utils.open_ai_helper import PDFQuestionAnswerer
 import base64
 import ast
 import pickle
-chatbot_ai=None
+# chatbot_ai=None
 # from sentence_transformers import SentenceTransformer, util
 class PickleField(fields.Binary):
     def convert_to_column(self, value, record, values=None, validate=True):
@@ -32,42 +32,75 @@ class Hotel(models.Model):
 			vals['object_field'] = self.object_field.convert_to_column(vals['object_field'], self)
 		return super(Hotel, self).write(vals)
 
-	@api.model
-	def create(self, vals):
-		if 'object_field' in vals:
-			vals['object_field'] = self.object_field.convert_to_column(vals['object_field'], self)
-		return super(Hotel, self).create(vals)
+	# @api.model_
+	# def create(self, vals):
+	# 	if 'object_field' in vals:
+	# 		vals['object_field'] = self.object_field.convert_to_column(vals['object_field'], self)
+	# 	return super(Hotel, self).create(vals)
+	def process_pdf(self,asked_question=None):
 
-	def process_pdf(self,question=None):
-		if not question:
-			question = "how many pools"
-		bytes_list=[]
-		# for pdf in self.pdf_ids:
-		# 	print("pdf",type(pdf.read()))
-		# 	# for j in pdf.read():
-		# 	# 	bytes_list.append(j["pdf_file"])
-		pdf_file=self.pdf_ids[0]["pdf_file"]
-		pdf_bytes = base64.b64decode(pdf_file)
-		# pdf_bytes = ast.literal_eval(pdf_file)
+		if not asked_question:
+			asked_question = "how many pools"
 
-		# all_bytes=b''.join(bytes_list)
-		# call ai/
-		global chatbot_ai
-		chatbot_ai=PDFQuestionAnswerer(pdf_bytes)
-		chatbot_ai.process_pdf()
-		data=chatbot_ai.answer_question(question)
-		print("data",data)
-		self.env["question_answer"].create({
-			"question":data["Question"],
-			"answer":data["Answer"],
-			"cost":data["Cost"],
-			"number_of_calls":1,
-		})
-		return data["Answer"]
+		result = self.env['question_answer'].find_most_similar(query=asked_question)
+		if len(result):
+			result_answer=result[0]["answer"]
+			print("result_answer",result_answer)
+		else:
 
-		# self.answer_question(question,chatbot_ai)
+			pdf_file=self.pdf_ids[0]["pdf_file"]
+			pdf_bytes = base64.b64decode(pdf_file)
 
-	# (chatbot_ai)
+
+			print("in ai ")
+
+			chatbot_ai = PDFQuestionAnswerer(pdf_bytes)
+			chatbot_ai.process_pdf()
+			data=chatbot_ai.answer_question(asked_question)
+			result_answer=data["Answer"]
+
+			self.env["question_answer"].create({
+				"question":data["Question"],
+				"answer":data["Answer"],
+				"cost":data["Cost"],
+				"number_of_calls":1,
+			})
+		return result_answer
+	# def process_pdf(self,asked_question=None):
+	#
+	# 	if not asked_question:
+	# 		asked_question = "how many pools"
+	# 	question, answer, cost = self.env['question_answer'].find_similar_question(asked_question=asked_question)
+	# 	# result = self.env['question_answer'].find_most_similar(query=asked_question)
+	# 	# print("result",result)
+	# 	pdf_file=self.pdf_ids[0]["pdf_file"]
+	# 	pdf_bytes = base64.b64decode(pdf_file)
+	# #
+	# 	result_answer=answer
+	# 	print("question before ai:",question)
+	# 	print("answer before ai:",answer)
+	# 	print("cost before ai:",cost)
+	# 	if question is None and answer is None and cost is None:
+	# 		print("in ai ")
+	# 		# question = self.env['question_answer']
+	# 		chatbot_ai = PDFQuestionAnswerer(pdf_bytes)
+	# 		chatbot_ai.process_pdf()
+	# 		data=chatbot_ai.answer_question(asked_question)
+	# 		result_answer=data["Answer"]
+	#
+	# 		self.env["question_answer"].create({
+	# 			"question":data["Question"],
+	# 			"answer":data["Answer"],
+	# 			"cost":data["Cost"],
+	# 			"number_of_calls":1,
+	# 		})
+	# 	return result_answer
+	#
+	#
+	#
+	# 	# self.answer_question(question,chatbot_ai)
+	#
+	# # (chatbot_ai)
 
 
 	# 	todo separate

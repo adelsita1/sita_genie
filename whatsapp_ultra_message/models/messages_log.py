@@ -26,7 +26,7 @@ class WhatsApp(models.Model):
 
     @api.model
     def create_message_received(self,message_received):
-        try:
+        # try:
             print("message_received",message_received)
             print("message_received",message_received["instanceId"])
             instance_id="instance"+message_received["instanceId"]
@@ -37,14 +37,15 @@ class WhatsApp(models.Model):
             mobile = data['from'][:-5]
             mobile2 = data['from'][1:-5]
             partner = self.env['res.partner'].sudo().search(
-                [('mobile', 'in', [mobile, mobile2, '2' + mobile, '2' + mobile2])])
+                [('mobile', 'in', [mobile, mobile2, '2' + mobile, '2' + mobile2]),],limit=1)
             if partner:
 
                 partner_id = partner[0].id
             else:
-                partner=self.env['res.partner'].sudo().create({
+                partner=self.env['res.partner'].with_context(prefetch_fields=False).sudo().create({
                     'name':data["pushname"],
-                    "mobile":data["mobile"],
+                    "mobile":mobile,
+
                 })
 
                 partner_id = partner.id
@@ -60,19 +61,19 @@ class WhatsApp(models.Model):
                 "push_name":data["pushname"],
 
             }
-            self.env["whatsapp_message_log"].sudo().create(vals)
+            self.env["whatsapp_message_log"].with_context(prefetch_fields=False).sudo().create(vals)
 
             if   data["body"] in ["stop","quit","unsubscribe"]:
                 partner.unsubscribe_from_whatsapp_messages=True
-            answer=hotel.process_pdf(question=data["body"])
+            answer=hotel.process_pdf(asked_question=data["body"])
             partner.send_message_partner(mobile,answer)
 
 
 
-        except Exception as e:
-            print("exception in create received",e)
-            return False
-        return True
+        # except Exception as e:
+        #     print("exception in create received",e)
+        #     return False
+            return True
 
 
     # datetime_rcv_state=fields.Datetime('Receiving State Datetime')
