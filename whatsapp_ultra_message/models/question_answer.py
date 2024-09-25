@@ -4,6 +4,11 @@ import torch
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import spacy
+
+from ..tools.spacy_tool import SpacyTool
+
+
 class QuestionAnswers(models.Model):
     _name = 'question_answer'
     _description = 'Description'
@@ -15,7 +20,27 @@ class QuestionAnswers(models.Model):
     number_of_calls=fields.Integer()
     cost=fields.Float(string="Cost")
 
+    # @api.model
+    # def _load_nlp_model(self):
+        # return spacy.load("en_core_web_md")  # Make sure to install this model
+    #
+    # @api.model
+    # def preprocess_text(self, text):
+    #     nlp = self._load_nlp_model()
+    #     doc = nlp(text)
+    #     return " ".join([token.lemma_.lower() for token in doc if not token.is_stop and not token.is_punct])
 
+    # @api.model
+    # def get_sentence_vector(self, text):
+    #     nlp = self._load_nlp_model()
+    #     doc = nlp(text)
+    #     return doc.vector
+
+    # @api.model
+    # def train_model(self):
+    #     questions = self.env['question_answer'].search([]).mapped('question')
+    #     question_vectors = np.array([self.get_sentence_vector(self.preprocess_text(q)) for q in questions])
+    #     return True
     @api.model
     def find_similar_question(self, asked_question: str='', similarity_threshold: float = 0.8):
         # asked_question ="how many pools?"
@@ -62,19 +87,24 @@ class QuestionAnswers(models.Model):
     def _get_vectorizer(self):
         return TfidfVectorizer()
 
-    @api.model
-    def train_model(self):
-        questions = self.env['question_answer'].search([]).mapped('question')
-        vectorizer = self._get_vectorizer()
-        question_vectors = vectorizer.fit_transform(questions)
-        return vectorizer,question_vectors
+    # @api.model
+    # def train_model(self,questions):
+    #     # questions = self.env['question_answer'].search([]).mapped('question')
+    #     # vectorizer = self._get_vectorizer()
+    #     question_vectors = np.array([self.get_sentence_vector(self.preprocess_text(q)) for q in questions])
+    #     return question_vectors
 
     @api.model
     def find_most_similar(self, query, top_n=1):
-        vectorizer,question_vectors = self.train_model()  # This retrains the model each time. Consider caching for performance.
-        query_vector = vectorizer.transform([query])
+        # hereee
+        Spacytool = SpacyTool()
+        questions = self.env['question_answer'].search([]).mapped('question')
+        # vectorizer,question_vectors = self.train_model()  # This retrains the model each time. Consider caching for performance.
+        question_vectors = Spacytool.train_model(questions)
+        # query_vector = vectorizer.transform([query])
+        query_vector = Spacytool.get_sentence_vector(Spacytool.preprocess_text(query))
 
-        similarities = cosine_similarity(query_vector,question_vectors).flatten()
+        similarities = cosine_similarity([query_vector],question_vectors).flatten()
         top_indices = similarities.argsort()[-top_n:][::-1]
 
         qa_records = self.env['question_answer'].search([])
@@ -90,5 +120,6 @@ class QuestionAnswers(models.Model):
             })
             # Increment the call count
             qa_record.number_of_calls += 1
+            qa_record.similar_questions = qa_record.similar_questions + str(query)+'\n' if  str(query) not in qa_record.similar_questions else qa_record.similar_questions
 
         return results
