@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <form string="FAQ">
                     <sheet>
-<!--                        <button name="find_similar_question" string="find similar question" type="object" class="btn btn-primary"/>-->
+                        <button name="find_most_similar_spacy" string="find similar question Spacy" type="object" class="btn btn-primary"/>
                         <div class="oe_title">
                             <label for="question"/>
                             <h1>

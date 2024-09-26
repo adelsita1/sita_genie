@@ -19,6 +19,6 @@ class SpacyTool:
 
     # @api.model
     def preprocess_text(self, text):
-        # nlp = self._load_nlp_model()
+
         doc = self.model(text)
         return " ".join([token.lemma_.lower() for token in doc if not token.is_stop and not token.is_punct])

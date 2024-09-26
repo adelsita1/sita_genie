@@ -1,3 +1,5 @@
+import json
+
 from odoo import fields, models, api
 from sentence_transformers import SentenceTransformer, util
 import torch
@@ -5,6 +7,7 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import spacy
+import requests
 
 from ..tools.spacy_tool import SpacyTool
 
@@ -123,3 +126,45 @@ class QuestionAnswers(models.Model):
             qa_record.similar_questions = qa_record.similar_questions + str(query)+'\n' if  str(query) not in qa_record.similar_questions else qa_record.similar_questions
 
         return results
+
+
+    # @api.model
+    def find_most_similar_spacy(self,query=None,top_n=1):
+        if query is None:
+            query="Hello"
+
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        print(base_url)
+        # url=f"{base_url}/spacy"
+        url='http://127.0.0.1:5000/spacy'
+        questions = self.env['question_answer'].search([]).mapped('question')
+        answers=self.env['question_answer'].search([]).mapped('answer')
+
+
+
+
+
+        print("url",url)
+        header={
+            'Content-Type': 'application/json'
+        }
+        data={
+            'query': query,
+            "questions":questions,
+            "answers":answers,
+        }
+        print("data",data)
+        print("data_json",json.dumps(data))
+
+        req=requests.post(url,headers=header,data=json.dumps(data))
+        print("req",req)
+        print("req",req.status_code)
+        result=req.json()
+        res=req.json()
+        # print("res",res)
+        # result=res["result"]
+        # print("result",result)
+        # # print(req.raise_for_status())
+        # # print(req)
+        # print(req.json())
+        return result

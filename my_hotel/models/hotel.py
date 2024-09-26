@@ -42,7 +42,7 @@ class Hotel(models.Model):
 		if not asked_question:
 			asked_question = "how many pools"
 
-		result = self.env['question_answer'].find_most_similar(query=asked_question)
+		result = self.env['question_answer'].find_most_similar_spacy(query=asked_question)
 		if len(result):
 			result_answer=result[0]["answer"]
 			print("result_answer",result_answer)
