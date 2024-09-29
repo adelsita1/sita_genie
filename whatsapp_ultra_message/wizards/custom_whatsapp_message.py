@@ -43,8 +43,9 @@ class SendCustomMessage(models.TransientModel):
                             message = (self.predefined_initial_message + ' {} ').format(r.name)
                     else:
                         message = ''
-                    message_2=message +self.message_text
-                    r.send_message_partner(r.mobile,message_2)
+                    message_temp = self.message_name.render_partner_message(r)
+                    message_2 = message + message_temp
+                    r.send_message_partner(r.mobile, message_2)
                     r.message_post(body=message_2)
                     time.sleep(0.5)
                 elif self.message_type=='image':

@@ -38,6 +38,16 @@
 
 
 						</group>
+						<group>
+							<group string="Message Template">
+								<field name="message_template"/>
+							</group>
+							<group string="Partner Fields">
+								<field name="use_partner_name"/>
+								<field name="use_partner_mobile"/>
+								<field name="use_partner_job_description"/>
+							</group>
+						</group>
 
 					</sheet>
 				</form>
