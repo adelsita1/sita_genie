@@ -12,6 +12,7 @@
 					<field name="partner_id"/>
 					<field name="push_name"/>
 					<field name="direction"/>
+					<field name="message_hash"/>
 
 
 					<field name="mobile"/>

@@ -23,7 +23,7 @@ class WhatsApp(models.Model):
     sent_from=fields.Char(string="From")
     account_id=fields.Many2one('ultra_message.account')
     push_name=fields.Char(string="Push Name")
-
+    message_hash=fields.Char(string="Hash")
     @api.model
     def create_message_received(self,message_received):
         # try:
@@ -59,10 +59,11 @@ class WhatsApp(models.Model):
                 "partner_id":partner_id,
                 'mobile': mobile,
                 "push_name":data["pushname"],
-
+                "message_hash":message_received["hash"],
             }
             self.env["whatsapp_message_log"].with_context(prefetch_fields=False).sudo().create(vals)
-
+            self.env.cr.commit()
+            self.env.cr.savepoint()
             if   data["body"] in ["stop","quit","unsubscribe"]:
                 partner.unsubscribe_from_whatsapp_messages=True
             answer=hotel.process_pdf(asked_question=data["body"])
