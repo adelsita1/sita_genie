@@ -1,8 +1,14 @@
 from odoo import models, fields, api
 from ..utils.open_ai_helper import PDFQuestionAnswerer
+from ..utils.translator import Translator
 import base64
 import ast
 import pickle
+from langdetect import detect, DetectorFactory
+import langcodes
+
+DetectorFactory.seed = 0
+
 # chatbot_ai=None
 # from sentence_transformers import SentenceTransformer, util
 class PickleField(fields.Binary):
@@ -38,14 +44,33 @@ class Hotel(models.Model):
 	# 		vals['object_field'] = self.object_field.convert_to_column(vals['object_field'], self)
 	# 	return super(Hotel, self).create(vals)
 	def process_pdf(self,asked_question=None):
-
 		if not asked_question:
 			asked_question = "how many pools"
+		print("asked_question", asked_question)
+		translator = Translator()
+		lang= translator.detect_language(text=asked_question)
+		print("lang",lang)
+		# lang, confidence = langid.classify(asked_question)
+		# lang = detect(asked_question)
 
-		result = self.env['question_answer'].find_most_similar_spacy(query=asked_question)
-		if len(result):
-			result_answer=result[0]["answer"]
-			print("result_answer",result_answer)
+		print("language:", lang['language'])
+		print("score:", lang['score'])
+		if lang['language'] !='en':
+			translated_text = translator.translate(asked_question, lang['language'],False)
+		else:
+			translated_text = asked_question
+		print("translated_text before spacy", translated_text)
+		result = self.env['question_answer'].find_most_similar_spacy(query=translated_text)
+		print("result after", result)
+		if result:
+			if lang['language'] != 'en':
+				print("in if not english if")
+				translator = Translator()
+				translated_text_answer = translator.translate(result[0]["answer"], lang['language'],True)
+				print("translated_text_answer",translated_text_answer)
+			else:
+				translated_text_answer=result[0]["answer"]
+				print("result_answer",translated_text_answer)
 		else:
 
 			pdf_file=self.pdf_ids[0]["pdf_file"]
@@ -56,8 +81,15 @@ class Hotel(models.Model):
 
 			chatbot_ai = PDFQuestionAnswerer(pdf_bytes)
 			chatbot_ai.process_pdf()
-			data=chatbot_ai.answer_question(asked_question)
-			result_answer=data["Answer"]
+			data=chatbot_ai.answer_question(translated_text)
+			if lang['language'] != 'en':
+				print("in if not english else")
+				translator = Translator()
+				translated_text_answer = translator.translate(data["Answer"], lang['language'],True)
+				print("translated_text_answer",translated_text_answer)
+			else:
+				translated_text_answer = data["Answer"]
+				print("translated_text_answer", translated_text_answer)
 
 			self.env["question_answer"].create({
 				"question":data["Question"],
@@ -65,7 +97,7 @@ class Hotel(models.Model):
 				"cost":data["Cost"],
 				"number_of_calls":1,
 			})
-		return result_answer
+		return translated_text_answer
 	# def process_pdf(self,asked_question=None):
 	#
 	# 	if not asked_question:

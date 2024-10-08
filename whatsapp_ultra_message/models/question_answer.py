@@ -1,12 +1,13 @@
 import json
 
+
 from odoo import fields, models, api
 from sentence_transformers import SentenceTransformer, util
 import torch
-import numpy as np
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import spacy
+
 import requests
 
 from ..tools.spacy_tool import SpacyTool
@@ -139,12 +140,11 @@ class QuestionAnswers(models.Model):
         url='http://127.0.0.1:5000/spacy'
         questions = self.env['question_answer'].search([]).mapped('question')
         answers=self.env['question_answer'].search([]).mapped('answer')
-
-
-
-
-
+        print("len of questions",len(questions))
+        print("type of questions", type(questions))
         print("url",url)
+        if not questions:
+            return
         header={
             'Content-Type': 'application/json'
         }
@@ -160,6 +160,7 @@ class QuestionAnswers(models.Model):
         print("req",req)
         print("req",req.status_code)
         result=req.json()
+        print("result",result)
         res=req.json()
         # print("res",res)
         # result=res["result"]
