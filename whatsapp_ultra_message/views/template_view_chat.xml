@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="whatsapp_chat" name="Whatsapp">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" type="text/css" href="/whatsapp_ultra_message/static/src/css/chat_view.css"/>
+            </xpath>
+<!--            <t t-call="website.layout">-->
+
+
+	           			<div class="chat-container">
+        <div class="chat-header">
+            <h3>Chat Room</h3>
+        </div>
+
+        <div class="chat-body" id="chatBody">
+            <t t-esc="chats.mapped('message_id')"/>
+            <t t-foreach="chats" t-as="chat">
+                <t t-if="chat.direction=='sent'">
+                     <div class="message user-message">
+                <div class="message-content"><t t-esc="chat.message_body"/></div>
+                <span class="message-time"><t t-esc="chat.sent_datetime"/></span>
+                     </div>
+                </t>
+
+            <t t-else="">
+               <div class="message other-message">
+                <div class="message-content"><t t-esc="chat.message_body"/></div>
+                <span class="message-time"><t t-esc="chat.sent_datetime"/></span>
+            </div>
+            </t>
+
+
+
+            </t>
+        </div>
+
+        <div class="chat-footer">
+            <input type="text" placeholder="Type a message" id="messageInput"/>
+            <button id="sendBtn">Send</button>
+        </div>
+    </div>
+
+
+
+<!--            </t>-->
+
+        </template>
+
+
+    </data>
+</odoo>

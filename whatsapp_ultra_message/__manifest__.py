@@ -33,6 +33,7 @@
         'views/messages_log.xml',
         'views/res_partner.xml',
         'views/question_answers.xml',
+        'views/template_view_chat.xml',
 
     ],
     # only loaded in demonstration mode

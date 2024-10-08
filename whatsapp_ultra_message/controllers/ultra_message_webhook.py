@@ -3,39 +3,24 @@ from odoo import http
 from odoo.http import request
 import json
 class WhatsappUltraMessage(http.Controller):
-    @http.route('/whatsapp_ultra_message/receiving_messages', auth='public',method=["POST","GET"],type='json',csrf=False)
+    @http.route('/view/chat/<int:id>', auth='user',method=["GET"],type='http',csrf=False)
     def handling_receiving_message(self, **kw):
         print("kw:",kw)
         try:
-            data = json.loads(request.httprequest.data)
-            print(data)
+            # data = json.loads(request.httprequest.data)
+            # print(data)
+        #     todo add secruity:
+            partner=request.env['res.partner'].sudo().search([('id','=',kw['id'])])
+            print("partner",partner)
+            print(partner.whatsapp_message_ids.sorted('sent_datetime').read())
         except Exception as e:
             print("exception is",e)
+        else:
+            values={
+                "chats":partner.whatsapp_message_ids.sorted('sent_datetime')
+            }
 
-        return "Hello Youssef"
-        # message_return = json.loads(request.body)
-        #
-        # bot = ultraChatBot(message_return)
-
-        # y = bot.Processingـincomingـmessages()
-        # if request.method == 'POST':
-        #     message_return = json.loads(request.body)
-        #
-        #     bot = ultraChatBot(message_return)
-        #
-        #     y = bot.Processingـincomingـmessages()
-        #     print("ke")
-        #     return "Hello, world"
-
-#     @http.route('/whatsapp_ultra_message/whatsapp_ultra_message/objects/', auth='public')
-#     def list(self, **kw):
-#         return http.request.render('whatsapp_ultra_message.listing', {
-#             'root': '/whatsapp_ultra_message/whatsapp_ultra_message',
-#             'objects': http.request.env['whatsapp_ultra_message.whatsapp_ultra_message'].search([]),
-#         })
-
-#     @http.route('/whatsapp_ultra_message/whatsapp_ultra_message/objects/<model("whatsapp_ultra_message.whatsapp_ultra_message"):obj>/', auth='public')
-#     def object(self, obj, **kw):
-#         return http.request.render('whatsapp_ultra_message.object', {
-#             'object': obj
-#         })
+            print("herrrr")
+            return request.render("whatsapp_ultra_message.whatsapp_chat",values)
+        # finally:
+        #     return "hello Youssef"

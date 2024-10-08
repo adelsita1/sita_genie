@@ -152,3 +152,12 @@ class Partner(models.Model):
                     'message_body': mess['body']
                 })
         self.env['whatsapp_message_log'].with_context(prefetch_fields=False).create(messages_to_create)
+
+
+
+
+    def action_view_chat(self):
+        return{
+            'type':'ir.actions.act_url',
+            'target':self, #to be viewed in the same page,
+            'url':self.env.company.get_base_url() + '/view/chat/{}'.format(self.id)}

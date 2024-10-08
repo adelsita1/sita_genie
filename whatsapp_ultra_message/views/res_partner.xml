@@ -16,6 +16,14 @@
 <!--						</group>-->
 					</page>
 				</xpath>
+				<xpath expr="//div[@name='button_box']" position="inside">
+					  <button class="oe_stat_button" type="object" name="action_view_chat"  string="View Chat">
+						 <span>
+							 <i class="fa fa-whatsapp"/>   Whatsapp Chat
+						 </span>
+<!--                    <field string="Chating" name="sale_order_count" widget="statinfo"/>-->
+                	</button>
+				</xpath>
 
 			</field>
 		</record>

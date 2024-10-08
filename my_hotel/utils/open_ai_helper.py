@@ -16,7 +16,7 @@ import io
 from io import BytesIO
 from pdfminer.high_level import extract_text_to_fp
 from pdfminer.layout import LAParams
-
+models=["text-embedding-3-small","text-embedding-ada-002","text-embedding-3-large"]
 class PDFQuestionAnswerer:
 
 
@@ -26,7 +26,7 @@ class PDFQuestionAnswerer:
         self.openai_api_key = os.getenv("openai_api_key")
         print("self.openai_api_key",self.openai_api_key)
         # self.excel_path = excel_path
-        self.embeddings = OpenAIEmbeddings(openai_api_key=self.openai_api_key)
+        self.embeddings = OpenAIEmbeddings(openai_api_key=self.openai_api_key,model=models[0])
         self.vector_store = None
         self.qa_chain = None
         # self.qa_data = self.load_qa_data()
