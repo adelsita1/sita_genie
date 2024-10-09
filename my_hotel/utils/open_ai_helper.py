@@ -1,12 +1,12 @@
 import os
 from typing import List, Tuple
 import pandas as pd
-
+from langchain_openai import OpenAIEmbeddings
 
 # from langchain.document_loaders import PyPDFLoader,PdfReader
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
-from langchain_community.embeddings import OpenAIEmbeddings
+# from langchain_community.embeddings import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
 from langchain_community.llms import OpenAI
@@ -26,7 +26,7 @@ class PDFQuestionAnswerer:
         self.openai_api_key = os.getenv("openai_api_key")
         print("self.openai_api_key",self.openai_api_key)
         # self.excel_path = excel_path
-        self.embeddings = OpenAIEmbeddings(openai_api_key=self.openai_api_key,model=models[0])
+        self.embeddings = OpenAIEmbeddings(openai_api_key=self.openai_api_key,model=models[1])
         self.vector_store = None
         self.qa_chain = None
         # self.qa_data = self.load_qa_data()
@@ -43,7 +43,7 @@ class PDFQuestionAnswerer:
         for page in pdf.pages:
             text += page.extract_text()
 
-        text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+        text_splitter = CharacterTextSplitter(chunk_size=100, chunk_overlap=20)
         texts = text_splitter.split_text(text)
         print("Text length: ",texts)
         print("type of text: ",type(texts))

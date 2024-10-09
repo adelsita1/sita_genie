@@ -3,7 +3,7 @@ from odoo import http
 from odoo.http import request
 import json
 class WhatsappUltraMessage(http.Controller):
-    @http.route('/view/chat/<int:id>', auth='user',method=["GET"],type='http',csrf=False)
+    @http.route('/view/chat/<int:id>', auth='user',methods=["GET"],type='http',csrf=False)
     def handling_receiving_message(self, **kw):
         print("kw:",kw)
         try:
