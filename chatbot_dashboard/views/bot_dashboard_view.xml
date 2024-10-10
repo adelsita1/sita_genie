@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+<!--        <record id="ModelName_form_view" model="ir.ui.view">-->
+<!--            <field name="name">ProjectName.ModelName.form</field>-->
+<!--            <field name="model">ProjectName.ModelName</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <form string="ModelTitle">-->
+<!--                    <sheet>-->
+<!--                        <div class="oe_title">-->
+<!--                            <label for="example_title"/>-->
+<!--                            <h1>-->
+<!--                                <field name="example_title" placeholder="Title"/>-->
+<!--                            </h1>-->
+<!--                        </div>-->
+<!--                        <group>-->
+<!--                            <group>-->
+<!--                                <field name="create_date"/>-->
+<!--                            </group>-->
+<!--                            <group>-->
+<!--                                <field name="example_field"/>-->
+<!--                            </group>-->
+<!--                        </group>-->
+<!--                    </sheet>-->
+<!--                </form>-->
+<!--            </field>-->
+<!--        </record>-->
+
+<!--        <record id="ModelName_tree_view" model="ir.ui.view">-->
+<!--            <field name="name">ProjectName.ModelName.tree</field>-->
+<!--            <field name="model">ProjectName.ModelName</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <tree string="ModelTitle">-->
+<!--                    <field name="create_date"/>-->
+<!--                    <field name="example_field"/>-->
+<!--                </tree>-->
+<!--            </field>-->
+<!--        </record>-->
+
+<!--        <record id="ModelName_search_view" model="ir.ui.view">-->
+<!--            <field name="name">ProjectName.ModelName.search</field>-->
+<!--            <field name="model">ProjectName.ModelName</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <search string="ModelTitle">-->
+<!--                    <group expand="1" string="Group By">-->
+<!--                        <filter string="Example Field" name="example_field" domain="[]"-->
+<!--                                context="{'group_by':'example_field'}"/>-->
+<!--                    </group>-->
+<!--                </search>-->
+<!--            </field>-->
+<!--        </record>-->
+
+        <record id="dashboard_chatbot_act_window" model="ir.actions.client">
+            <field name="name">ChatBot Dashboard</field>
+
+            <field name="tag">chatbot_dashboard_main</field>
+
+
+        </record>
+
+        <menuitem name="ChatBot Dashboard" id="bot_dashboard" parent="whatsapp_ultra_message.whats_app_ultra_message" action="dashboard_chatbot_act_window" sequence="1"/>
+
+    </data>
+</odoo>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<template id="template_chatbot" xml:space="preserve">
+    <t t-name="ChatBotDashBoard">
+       <div class="o_control_panel">
+           <div class="container-fluid">
+               <div class="row">
+                   <div class="col-md-3">
+                       <div class="row">
+                           <div id="total_message_sent" class="col-md-6 mt-4" t-on-click="">
+                               <div class="chat_box" style="height 180px;">
+                                   <div class="row">
+                                       <div class="col-md-12 mt-5">
+
+
+
+
+<!--                                           <i class="fa fa-gear"/>-->
+<!--                <i class="fa fa-arrow-up-right-from-square"/>-->
+<!--                <i class="fa fa-arrow-up-right-from-square"/>-->
+                                           <i class="fa fa-play"></i>
+                                       </div>
+                                   </div>
+
+                                   <div class="col-md-12 mt-3">
+                                       <span class="message_sent_count"
+                                             id="total_message_sent">
+                                           <t t-esc="this.chatbot_state.total_message_sent"/>
+                                       </span>
+                                   </div>
+                                   <br/>
+
+                                   <span class="chat_box_title">Message Sent</span>
+
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+    </t>
+</template>
