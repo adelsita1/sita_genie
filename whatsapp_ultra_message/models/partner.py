@@ -11,7 +11,7 @@ class Partner(models.Model):
     _inherit= 'res.partner'
     whatsapp_message_ids=fields.One2many('whatsapp_message_log','partner_id',string="Whatsapp Messages")
     unsubscribe_from_whatsapp_messages=fields.Boolean(string="Unsubscribe from Whatsapp",default=False)
-
+    unsubscription_datetime=fields.Datetime(string="Unsubscription Datetime")
 
     def send_message_partner(self, phone, message):
         if self.unsubscribe_from_whatsapp_messages:
@@ -90,6 +90,7 @@ class Partner(models.Model):
 
     def unsubscribe_form_whatsapp(self):
         self.sudo().unsubscribe_from_whatsapp_messages=True
+        self.sudo().unsubscription_datetime=lambda self:datetime.now()
 
 
     def send_custom_message(self):
@@ -160,4 +161,4 @@ class Partner(models.Model):
         return{
             'type':'ir.actions.act_url',
             'target':self, #to be viewed in the same page,
-            'url':self.env.company.get_base_url() + '/view/chat/{}'.format(self.id)}
+            'url':self.env.company.get_base_url() + '/view/chat/{}'.format(self.id)+"#end"}

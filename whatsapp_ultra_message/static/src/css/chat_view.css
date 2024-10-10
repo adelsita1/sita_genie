@@ -14,14 +14,20 @@ body {
 }
 
 .chat-container {
-    width: 400px;
-    max-width: 100%;
+    width: 80%;
+    max-width: 300px;
     background-color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+}
+@media only screen and (max-width: 400px){
+   .chat-container {
+    width: 100%;
+       max-width: 100%;
+   }
 }
 
 .chat-header {
@@ -35,23 +41,31 @@ body {
 .chat-body {
     flex: 1;
     padding: 20px;
-    overflow-y: auto;
     background-color: #f9f9f9;
 }
 
-.message {
+.message,
+.message-date{
     margin-bottom: 20px;
-    max-width: 70%;
     display: flex;
     flex-direction: column;
+
 }
 
 .user-message {
-    align-self: flex-end;
-    background-color: #007bff;
-    color: white;
+    font-size: 12px;
+    align-self: end;
+    background-color: #0056b3;
+    color: whitesmoke;
     border-radius: 20px 20px 0 20px;
     padding: 10px;
+    align-items: center;
+    alignment-baseline: after-edge;
+        margin-left: 10%;
+    max-width: 600px;
+  word-wrap: break-word; /* Ensures long words/URLs wrap to the next line */
+  overflow-wrap: break-word; /* Alternative for wider browser support */
+  white-space: pre-wrap; /* Preserves spaces and breaks */
 }
 
 .other-message {
@@ -59,6 +73,7 @@ body {
     background-color: #f1f1f1;
     border-radius: 20px 20px 20px 0;
     padding: 10px;
+        margin-right: 10%;
 }
 
 .message-content {
@@ -66,12 +81,22 @@ body {
 }
 
 .message-time {
-    font-size: 12px;
+    font-size: 10px;
     margin-top: 5px;
-    color: #999;
+    color: #e9e9e9;
     align-self: flex-end;
 }
+.message-date{
+    font-family: "Segoe UI", Tahoma, Geneva,Verdana, sans-serif;
 
+    border-bottom: solid 1px #bdbdbd;
+    text-align: center;
+    font-size: 12px;
+    padding: 5px;
+    border-radius: 1%;
+
+    margin:10px auto;
+}
 .chat-footer {
     display: flex;
     padding: 10px;
@@ -88,7 +113,7 @@ body {
 #sendBtn {
     margin-left: 10px;
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #0056b3;
     border: none;
     color: white;
     border-radius: 20px;
