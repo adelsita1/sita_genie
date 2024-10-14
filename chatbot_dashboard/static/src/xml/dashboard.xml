@@ -46,11 +46,11 @@
                    </div>
                     <div class="col-sm-12 col-md-6">
                         <div id="total_messages" class="col-sm-12 col-md-6">
-                            <div class="projects_hours_pie_div half_chart chart-container card-shadow">
+                            <div class="messages_total_pie_div half_chart chart-container card-shadow">
                                 <h2>Messages by Agent</h2>
                                 <hr/>
                                 <div class="graph_canvas">
-                                    <canvas class="project_hours" width="300"
+                                    <canvas class="message_direction" width="300"
                                             height="200"/>
                                 </div>
                             </div>

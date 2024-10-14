@@ -26,8 +26,12 @@ Long description of module's purpose
     ],
     'assets': {
         'web.assets_backend': [
-            'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.js',
+            # 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.js',
+            # 'https://www.jsdelivr.com/package/npm/chart.js',
+            # 'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js',
+
             'chatbot_dashboard/static/src/css/dashboard.css',
+            'https://cdn.jsdelivr.net/npm/chart.js',
             'chatbot_dashboard/static/src/js/dashboard.js',
             'chatbot_dashboard/static/src/xml/dashboard.xml',
 
