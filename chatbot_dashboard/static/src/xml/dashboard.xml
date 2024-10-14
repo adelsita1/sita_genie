@@ -9,7 +9,7 @@
        <div class="o_control_panel">
            <div class="container-fluid">
                <div class="row mt-5">
-                   <div class="col-md-6 col">
+                   <div class="col-sm-12 col-md-3">
                        <div class="row">
                            <div id="total_message_sent" class="col-md-6 mt-4" t-on-click="_onClickSentMessages">
                                <div class="chat_box" style="height 180px;">
@@ -44,13 +44,14 @@
                            </div>
                        </div>
                    </div>
-                    <div class="col-sm-12 col-md-6">
+                    <div class="col-sm-12 col-md-9">
                         <div id="total_messages" class="col-sm-12 col-md-6">
                             <div class="messages_total_pie_div half_chart chart-container card-shadow">
                                 <h2>Messages by Agent</h2>
                                 <hr/>
                                 <div class="graph_canvas">
-                                    <canvas class="message_direction" width="300"
+<!--                                    t-ref used for UseRef In JS -->
+                                    <canvas t-ref="partner_messages_ref" class="message_direction" width="300"
                                             height="200"/>
                                 </div>
                             </div>

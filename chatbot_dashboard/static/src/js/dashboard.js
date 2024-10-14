@@ -1,9 +1,9 @@
-/** @odoo-module **/ //special command for odoo in the begining of the file of js
+/** @odoo-module **/  //special command for odoo in the begining of the file of js
 import {registry} from "@web/core/registry";
-
-const {Component, useState, onWillStart,onMounted} = owl
 import {jsonrpc} from "@web/core/network/rpc_service";
 import {useService} from "@web/core/utils/hooks";
+// useRef used for dom hold div or canvas from xml with t-ref
+const {Component, useState, onWillStart,onMounted,useRef} = owl
 
 // import {onWillStart} from "../../../../../odoo17_c/addons/web/static/lib/owl/owl";
 
@@ -11,9 +11,11 @@ export class ChatbotDashboard extends Component {
 
     setup() {
         this.action = useService("action")
+        this.partner_messages_ref=useRef("partner_messages_ref")
         this.chatbot_state = useState({
             total_message_sent: 0,
             message_sent_ids: [],
+
         });
         //this method is called on reload the page call back async
         // overriding this method
@@ -34,6 +36,8 @@ export class ChatbotDashboard extends Component {
         console.log("in async onMounted")
     }
 
+
+
     // define the message
     fetchDataMessages() {
         var self = this;
@@ -45,64 +49,99 @@ export class ChatbotDashboard extends Component {
         })
 
     }
+    async render_total_messages(){
+        const result_data= await this.fetchPartnerData();
+         console.log("result_data clean code",result_data)
+         console.log("result_data clean code 0",result_data[0])
+         console.log("result_data clean code 1",result_data[1])
 
-    render_total_messages(){
-        var self=this;
-//         var data={
-//             labels:['Sent','Receive'],
-//             datasets:[{
-//                 label:"Dataset",
-//                 data:[403,157],
-//                 backgroundColor:[
-//                     'rgb(255,99,132)',
-//                     'rgb(31,157,213)',
-// ,
-//                 ], // mapping corresponding
-//             hoverOffset:4,
-//             }]
-//
-//         };
-        var ctx=$('.message_direction');
-        // ctx is the dom or the class which we will assign the chart
+        const chartData=this.prepareChartData(result_data)
 
-        // this to call a method from directly add "web/dataset/call_kw/{ModelName}/{FunctionName}
-        jsonrpc("web/dataset/call_kw/whatsapp_message_log/get_message_log",{
-            model:'whatsapp_message_log',
-            method:'get_message_log',
-            args:[{}],
-            kwargs:{},
-        }).then(function (result_data) {
-            console.log("result_data",result_data);
-            var data={
-            labels:result_data[1],
-            datasets:[{
-                label:"Count",
-                data:result_data[0],
-                backgroundColor:[
-                    'rgb(255,99,132)',
-                    'rgb(31,157,213)',
-                    'rgb(213,198,31)',
-                    'rgb(213,31,171)',
-                    'rgb(167,119,7)',
-                    'rgb(160,19,7)',
-                    'rgb(7,160,124)',
-                    'rgb(70,24,20)',
-                    'rgb(35,149,140)',
-                    'rgb(7,160,32)',
+        const $el=$(this.partner_messages_ref.el)
+        this.createChart($el,"doughnut",chartData);
 
-                ], // mapping corresponding
-            hoverOffset:4,
-            }],
+    }
 
-
-        };
-            var chart=new Chart(ctx,{
-            type:'doughnut',
-            data:data,
+    fetchPartnerData(){
+        return jsonrpc("web/dataset/call_kw/whatsapp_message_log/get_message_log", {
+            model: 'whatsapp_message_log',
+            method: 'get_message_log',
+            args: [{}],
+            kwargs: {},
         })
-        });
 
-        }
+    }
+    prepareChartData(result_data){
+    const labels=result_data[1];
+    const data=result_data[0];
+    const colors=generateDynamicColors(5);
+
+    return {
+        labels:labels,
+          datasets:[{
+                label:"Count",
+                data:data,
+                backgroundColor:colors,
+            hoverOffset:4,
+            }]
+
+    }
+
+
+
+    };
+    createChart(element,type,data){
+        new Chart(
+            element,{
+            type:type,
+            data:data,
+            }
+        )
+    }
+    // render_total_messages(){
+    //     var self=this;
+    //
+    //     var ctx=$('.message_direction');
+    //     // ctx is the dom or the class which we will assign the chart
+    //
+    //     // this to call a method from directly add "web/dataset/call_kw/{ModelName}/{FunctionName}
+    //     jsonrpc("web/dataset/call_kw/whatsapp_message_log/get_message_log",{
+    //         model:'whatsapp_message_log',
+    //         method:'get_message_log',
+    //         args:[{}],
+    //         kwargs:{},
+    //     }).then(function (result_data) {
+    //         console.log("result_data",result_data);
+    //         var data={
+    //         labels:result_data[1],
+    //         datasets:[{
+    //             label:"Count",
+    //             data:result_data[0],
+    //             backgroundColor:[
+    //                 'rgb(255,99,132)',
+    //                 'rgb(31,157,213)',
+    //                 'rgb(213,198,31)',
+    //                 'rgb(213,31,171)',
+    //                 'rgb(167,119,7)',
+    //                 'rgb(160,19,7)',
+    //                 'rgb(7,160,124)',
+    //                 'rgb(70,24,20)',
+    //                 'rgb(35,149,140)',
+    //                 'rgb(7,160,32)',
+    //
+    //             ], // mapping corresponding
+    //         hoverOffset:4,
+    //         }],
+    //
+    //
+    //     };
+    //         var chart=new Chart(ctx,{
+    //         type:'doughnut',
+    //         data:data,
+    //     })
+    //     });
+    //
+    //     }
 
 
 
