@@ -18,19 +18,24 @@ Long description of module's purpose
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','whatsapp_ultra_message','my_hotel',],
+    'depends': ['base', 'whatsapp_ultra_message', 'my_hotel', 'web'],
 
     # always loaded
     'data': [
-       'views/bot_dashboard_view.xml',
+        'views/bot_dashboard_view.xml',
     ],
-    'assets':{
-        'web.assets_backend':[
+    'assets': {
+        'web.assets_backend': [
+            'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.js',
             'chatbot_dashboard/static/src/css/dashboard.css',
             'chatbot_dashboard/static/src/js/dashboard.js',
             'chatbot_dashboard/static/src/xml/dashboard.xml',
 
         ],
+        'web.assets_frontend': [
+            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css',
+
+        ]
     },
 
     # only loaded in demonstration mode
@@ -38,4 +43,3 @@ Long description of module's purpose
         'demo/demo.xml',
     ],
 }
-

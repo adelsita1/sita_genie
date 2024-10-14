@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <template id="template_chatbot" xml:space="preserve">
+<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"/>-->
+    <!--    <xpath expr="." position="inside">-->
+    <!--            <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>-->
+    <!--        </xpath>-->
     <t t-name="ChatBotDashBoard">
        <div class="o_control_panel">
            <div class="container-fluid">
-               <div class="row">
-                   <div class="col-md-3">
+               <div class="row mt-5">
+                   <div class="col-md-6 col">
                        <div class="row">
-                           <div id="total_message_sent" class="col-md-6 mt-4" t-on-click="">
+                           <div id="total_message_sent" class="col-md-6 mt-4" t-on-click="_onClickSentMessages">
                                <div class="chat_box" style="height 180px;">
                                    <div class="row">
                                        <div class="col-md-12 mt-5">
@@ -15,10 +19,14 @@
 
 
 
-<!--                                           <i class="fa fa-gear"/>-->
-<!--                <i class="fa fa-arrow-up-right-from-square"/>-->
-<!--                <i class="fa fa-arrow-up-right-from-square"/>-->
-                                           <i class="fa fa-play"></i>
+
+                                           <i class="fa fa-caret-up"/>
+                                           <div style="height:0.5px;"/>
+
+
+                                           <i class="fa fa-envelope"/>
+
+
                                        </div>
                                    </div>
 
@@ -36,8 +44,22 @@
                            </div>
                        </div>
                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div id="total_messages" class="col-sm-12 col-md-6">
+                            <div class="projects_hours_pie_div half_chart chart-container card-shadow">
+                                <h2>Messages by Agent</h2>
+                                <hr/>
+                                <div class="graph_canvas">
+                                    <canvas class="project_hours" width="300"
+                                            height="200"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                </div>
            </div>
+
+
        </div>
     </t>
 </template>
