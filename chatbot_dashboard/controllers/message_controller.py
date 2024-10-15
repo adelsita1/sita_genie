@@ -14,28 +14,29 @@ class MessageDashBoard(http.Controller):
     @http.route('/get/messages/data', type="json", auth="none")
 
     def fetch_messages(self):
-        values = {}
+
 
         message_obj = request.env['whatsapp_message_log'].sudo()
 
         message_sent=message_obj.search_count([("direction", "=", 'sent')])
         message_sent_ids=message_obj.search([("direction", "=", 'sent')])
-        print("message_sent",message_sent)
+
         message_receive=message_obj.search_count([("direction", "=", 'received')])
-        print("message_receive", message_receive)
+        message_receive_ids=message_obj.search([("direction", "=", 'received')])
+
+        faqs=request.env['question_answer'].sudo().search([])
+
+
+
         values={
             'total_message_sent':message_sent,
+            'total_message_received': message_receive,
             'message_sent_ids':message_sent_ids.mapped("id"),
-            'message_receive_count':message_receive,
-        }
-        print("values",values)
+            'message_received_ids':message_receive_ids.mapped("id"),
+            'faq':faqs.mapped("id"),
+            'total_faq':len(faqs),
 
-        # if message_sent:
-        #     values['success'] = True
-        #     values['return'] = "Something"
-        # else:
-        #     values['success'] = False
-        #     values['error_code'] = 1
-        #     values['error_data'] = 'No data found!'
+        }
+
 
         return values

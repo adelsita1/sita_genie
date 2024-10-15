@@ -3,18 +3,22 @@ import {registry} from "@web/core/registry";
 import {jsonrpc} from "@web/core/network/rpc_service";
 import {useService} from "@web/core/utils/hooks";
 // useRef used for dom hold div or canvas from xml with t-ref
-const {Component, useState, onWillStart,onMounted,useRef} = owl
+const {Component, useState, onWillStart, onMounted, useRef} = owl
 
 // import {onWillStart} from "../../../../../odoo17_c/addons/web/static/lib/owl/owl";
 
 export class ChatbotDashboard extends Component {
-
+    // use each variables we will used  in setup
     setup() {
         this.action = useService("action")
-        this.partner_messages_ref=useRef("partner_messages_ref")
+        this.partner_messages_ref = useRef("partner_messages_ref")
         this.chatbot_state = useState({
             total_message_sent: 0,
+            total_message_received: 0,
+            total_faq:0,
             message_sent_ids: [],
+            message_received_ids: [],
+            faqs:[],
 
         });
         //this method is called on reload the page call back async
@@ -30,12 +34,12 @@ export class ChatbotDashboard extends Component {
     async onWillStart() {
         await this.fetchDataMessages();
     }
-    // called after loading the component why beacuse I need a selector from the componet so the component must be exist before
-    async onMounted(){
-        this.render_total_messages()
-        console.log("in async onMounted")
-    }
 
+    // called after loading the component why beacuse I need a selector from the componet so the component must be exist before
+    async onMounted() {
+        await this.render_total_messages()
+        // console.log("in async onMounted")
+    }
 
 
     // define the message
@@ -46,23 +50,26 @@ export class ChatbotDashboard extends Component {
 
             self.chatbot_state.total_message_sent = data_result.total_message_sent;
             self.chatbot_state.message_sent_ids = data_result.message_sent_ids;
+            self.chatbot_state.total_message_received = data_result.total_message_received;
+            self.chatbot_state.message_received_ids = data_result.message_received_ids;
+            self.chatbot_state.faqs=data_result.faqs;
+            self.total_faq=data_result.total_faq;
         })
 
     }
-    async render_total_messages(){
-        const result_data= await this.fetchPartnerData();
-         console.log("result_data clean code",result_data)
-         console.log("result_data clean code 0",result_data[0])
-         console.log("result_data clean code 1",result_data[1])
 
-        const chartData=this.prepareChartData(result_data)
+    async render_total_messages() {
+        const result_data = await this.fetchPartnerData();
 
-        const $el=$(this.partner_messages_ref.el)
-        this.createChart($el,"doughnut",chartData);
+
+        const chartData = this.prepareChartData(result_data)
+
+        const $el = $(this.partner_messages_ref.el)
+        this.createChart($el, "bar", chartData);
 
     }
 
-    fetchPartnerData(){
+    fetchPartnerData() {
         return jsonrpc("web/dataset/call_kw/whatsapp_message_log/get_message_log", {
             model: 'whatsapp_message_log',
             method: 'get_message_log',
@@ -71,33 +78,35 @@ export class ChatbotDashboard extends Component {
         })
 
     }
-    prepareChartData(result_data){
-    const labels=result_data[1];
-    const data=result_data[0];
-    const colors=generateDynamicColors(5);
 
-    return {
-        labels:labels,
-          datasets:[{
-                label:"Count",
-                data:data,
-                backgroundColor:colors,
-            hoverOffset:4,
+    prepareChartData(result_data) {
+        const labels = result_data[1];
+        const data = result_data[0];
+        const colors = generateDynamicColors(5);
+
+        return {
+            labels: labels,
+            datasets: [{
+                label: "Count",
+                data: data,
+                backgroundColor: colors,
+                hoverOffset: 4,
             }]
 
-    }
-
+        }
 
 
     };
-    createChart(element,type,data){
+
+    createChart(element, type, data) {
         new Chart(
-            element,{
-            type:type,
-            data:data,
+            element, {
+                type: type,
+                data: data,
             }
         )
     }
+
     // render_total_messages(){
     //     var self=this;
     //
@@ -143,17 +152,37 @@ export class ChatbotDashboard extends Component {
     //
     //     }
 
+    _onClickReceivedMessages() {
+        const message_received_ids = this.chatbot_state.message_received_ids;
+        const options = {
+            clearBreadcrumbs: false,
+            additional_context: {},
+        }
+        this.action.doAction(
+            {
+                name: ("Message Received"),
+                type: 'ir.actions.act_window',
+                res_model: "whatsapp_message_log",
+                view_mode: "form",
+                views: [[false, 'list'], [false, 'form']],
+                domain: [['id', 'in', message_received_ids]],
+                context: {
+                    create: false,
+                },
+                target: 'current',
 
+            }, options)
+
+
+    }
 
     _onClickSentMessages() {
-        var messages_sent_ids = this.chatbot_state.message_sent_ids
-       // way1
-        let xml_id=""
-        var options={
-            clearBreadcrumbs:false, // this for navigation if true no breadcrumbs
-            additional_context :{
-
-            } ,
+        const messages_sent_ids = this.chatbot_state.message_sent_ids
+        // way1
+        let xml_id = ""
+        const options = {
+            clearBreadcrumbs: false, // this for navigation if true no breadcrumbs
+            additional_context: {},
         };
         // this can render even if no id
         //  you can add views like kanban , from , calender

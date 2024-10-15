@@ -15,19 +15,12 @@
                                <div class="chat_box" style="height 180px;">
                                    <div class="row">
                                        <div class="col-md-12 mt-5">
+                                           <strong>
+                                               <i class="bi bi-send"/>
 
-
-
-
-
-                                           <i class="fa fa-caret-up"/>
-                                           <div style="height:0.5px;"/>
-
-
-                                           <i class="fa fa-envelope"/>
-
-
+                                         </strong>
                                        </div>
+
                                    </div>
 
                                    <div class="col-md-12 mt-3">
@@ -36,7 +29,7 @@
                                            <t t-esc="this.chatbot_state.total_message_sent"/>
                                        </span>
                                    </div>
-                                   <br/>
+
 
                                    <span class="chat_box_title">Message Sent</span>
 
@@ -44,7 +37,66 @@
                            </div>
                        </div>
                    </div>
-                    <div class="col-sm-12 col-md-9">
+                   <div class="col-sm-12 col-md-3">
+                       <div class="row">
+                           <div id="total_message_received" class="col-md-6 mt-4" t-on-click="_onClickReceivedMessages">
+                               <div class="chat_box" style="height 180px;">
+                                   <div class="row">
+                                       <div class="col-md-12 mt-5">
+                                           <strong>
+                                               <i class="bi bi-chat-left"/>
+
+                                         </strong>
+                                       </div>
+
+                                   </div>
+
+                                   <div class="col-md-12 mt-3">
+                                       <span class="message_sent_count"
+                                             id="total_message_received">
+                                           <t t-esc="this.chatbot_state.total_message_received"/>
+                                       </span>
+                                   </div>
+
+
+                                   <span class="chat_box_title">Message Received</span>
+
+                               </div>
+                           </div>
+                       </div>
+                   </div><div class="col-sm-12 col-md-3">
+                       <div class="row">
+                           <div id="total_message_received" class="col-md-6 mt-4" t-on-click="_onClickReceivedMessages">
+                               <div class="chat_box" style="height 180px;">
+                                   <div class="row">
+                                       <div class="col-md-12 mt-5">
+                                           <strong>
+                                               <i class="bi bi-question-circle"/>
+
+                                         </strong>
+                                       </div>
+
+                                   </div>
+
+                                   <div class="col-md-12 mt-2">
+                                       <span class="message_sent_count"
+                                             id="total_message_received">
+                                           <t t-esc="this.chatbot_state.total_faq"/>
+                                       </span>
+                                   </div>
+
+
+                                   <span class="chat_box_title">Message FAQs</span>
+
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+                   <br/>
+                   <br/>
+
+                   <div class="row mt-5">
+                    <div class="col-sm-12 col-md-6 col-lg-6">
                         <div id="total_messages" class="col-sm-12 col-md-6">
                             <div class="messages_total_pie_div half_chart chart-container card-shadow">
                                 <h2>Messages by Agent</h2>
@@ -57,6 +109,7 @@
                             </div>
                         </div>
                     </div>
+                   </div>
                </div>
            </div>
 

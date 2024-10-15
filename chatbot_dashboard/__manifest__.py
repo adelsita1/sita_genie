@@ -30,8 +30,10 @@ Long description of module's purpose
             # 'https://www.jsdelivr.com/package/npm/chart.js',
             # 'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js',
             'chatbot_dashboard/static/src/js/helper_color_generator.js',
+            'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css',
             'chatbot_dashboard/static/src/css/dashboard.css',
             'https://cdn.jsdelivr.net/npm/chart.js',
+            "https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels.js",
             'chatbot_dashboard/static/src/js/dashboard.js',
             'chatbot_dashboard/static/src/xml/dashboard.xml',
 
