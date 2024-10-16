@@ -64,9 +64,10 @@
                                </div>
                            </div>
                        </div>
-                   </div><div class="col-sm-12 col-md-3">
+                   </div>
+                   <div class="col-sm-12 col-md-3">
                        <div class="row">
-                           <div id="total_message_received" class="col-md-6 mt-4" t-on-click="_onClickReceivedMessages">
+                           <div id="total_message_faq" class="col-md-6 mt-4" t-on-click="_onClickFAQ">
                                <div class="chat_box" style="height 180px;">
                                    <div class="row">
                                        <div class="col-md-12 mt-5">
@@ -80,13 +81,45 @@
 
                                    <div class="col-md-12 mt-2">
                                        <span class="message_sent_count"
-                                             id="total_message_received">
+                                             id="message_faq">
                                            <t t-esc="this.chatbot_state.total_faq"/>
                                        </span>
                                    </div>
 
 
                                    <span class="chat_box_title">Message FAQs</span>
+
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="col-sm-12 col-md-3">
+                       <div class="row">
+                           <div id="total_agent" class="col-md-6 mt-4" t-on-click="">
+                               <div class="chat_box" style="height 180px;">
+                                   <div class="row">
+                                       <div class="col-md-12 mt-5">
+                                           <strong>
+                                               <i class="bi bi-person"/>
+
+                                         </strong>
+                                       </div>
+
+                                   </div>
+
+                                   <div class="col-md-12 mt-2">
+                                       <span class="message_sent_count"
+                                             id="agents">
+                                          <span>
+                                              <t t-esc="this.chatbot_state.free_agents"/>
+                                              /
+                                               <t t-esc="this.chatbot_state.total_agents"/>
+                                          </span>
+                                       </span>
+                                   </div>
+
+
+                                   <span class="chat_box_title">Free Agents</span>
 
                                </div>
                            </div>

@@ -19,6 +19,8 @@ export class ChatbotDashboard extends Component {
             message_sent_ids: [],
             message_received_ids: [],
             faqs:[],
+            total_agents:0,
+            free_agents:0,
 
         });
         //this method is called on reload the page call back async
@@ -47,13 +49,15 @@ export class ChatbotDashboard extends Component {
         var self = this;
         // function is anonymous  function to handel data get from api
         jsonrpc('/get/messages/data', {}).then(function (data_result) {
-
+            console.log("data_result",data_result);
             self.chatbot_state.total_message_sent = data_result.total_message_sent;
             self.chatbot_state.message_sent_ids = data_result.message_sent_ids;
             self.chatbot_state.total_message_received = data_result.total_message_received;
             self.chatbot_state.message_received_ids = data_result.message_received_ids;
             self.chatbot_state.faqs=data_result.faqs;
-            self.total_faq=data_result.total_faq;
+            self.chatbot_state.total_faq=data_result.total_faq;
+            self.chatbot_state.total_agents=data_result.total_agents;
+            self.chatbot_state.free_agents=data_result.free_agents;
         })
 
     }
@@ -176,6 +180,7 @@ export class ChatbotDashboard extends Component {
 
     }
 
+
     _onClickSentMessages() {
         const messages_sent_ids = this.chatbot_state.message_sent_ids
         // way1
@@ -196,6 +201,37 @@ export class ChatbotDashboard extends Component {
 
             views: [[false, 'list'], [false, 'form']],
             domain: [['id', 'in', messages_sent_ids]],
+            context: {
+                create: false,
+            },
+            target: 'current',
+
+        }, options)
+        // this.action.doAction(xml_id,options)
+
+    }
+
+    _onClickFAQ() {
+        const messages_faq = this.chatbot_state.faqs;
+        console.log("messages_faq",messages_faq)
+        // way1
+        let xml_id = ""
+        const options = {
+            clearBreadcrumbs: false, // this for navigation if true no breadcrumbs
+            additional_context: {},
+        };
+        // this can render even if no id
+        //  you can add views like kanban , from , calender
+        // view can id can be passed instead of False
+
+        this.action.doAction({
+            name: ("FAQs"),
+            type: 'ir.actions.act_window',
+            res_model: 'question_answer',
+            view_mode: 'form',
+
+            views: [[false, 'list']],
+            domain: [['id', 'in', messages_faq]],
             context: {
                 create: false,
             },

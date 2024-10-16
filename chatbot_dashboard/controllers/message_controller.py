@@ -26,6 +26,11 @@ class MessageDashBoard(http.Controller):
 
         faqs=request.env['question_answer'].sudo().search([])
 
+        partners=request.env['res.partner'].sudo()
+        total_agents=partners.search_count([("is_life_agent","=",True)])
+        free_agents=partners.search_count([("is_life_agent","=",True),("life_agent_state","=","free")])
+
+
 
 
         values={
@@ -33,10 +38,19 @@ class MessageDashBoard(http.Controller):
             'total_message_received': message_receive,
             'message_sent_ids':message_sent_ids.mapped("id"),
             'message_received_ids':message_receive_ids.mapped("id"),
-            'faq':faqs.mapped("id"),
+            'faqs':faqs.mapped("id"),
             'total_faq':len(faqs),
+            "total_agents":total_agents,
+            "free_agents":free_agents,
+
 
         }
+        # todo add agents ids
+        # todo add questions answered by ai/live agents
+        # todo add crm leads
+        # todo rates table
+
+
 
 
         return values
