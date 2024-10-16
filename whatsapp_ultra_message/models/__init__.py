@@ -7,3 +7,4 @@ from . import messages_log
 
 from . import ultra_message_account
 from . import question_answer
+from . import life_agent

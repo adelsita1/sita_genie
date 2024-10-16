@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_app_one_app_one,app_one.app_one,model_car,,1,1,1,1
+access_app_one_app_one_driver,app_one.app_one,model_driver,,1,1,1,1
+access_app_one_car_rent,app_one.app_one,model_car_rent,,1,1,1,1
+access_app_one_todo_task,app_one.app_one,model_todo_task,,1,1,1,1

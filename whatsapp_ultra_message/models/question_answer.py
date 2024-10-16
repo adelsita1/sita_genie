@@ -20,9 +20,13 @@ class QuestionAnswers(models.Model):
     question = fields.Text(required=True,string="Question")
     answer=fields.Text(required=True,string="Answer")
     similar_questions = fields.Text(default='')
-
     number_of_calls=fields.Integer()
     cost=fields.Float(string="Cost")
+    answer_status = fields.Selection(string="Status Answer", selection=[
+        ('ai','AI'),
+        ('life_agent','Life Agent'),
+    ])
+    check_life_agent = fields.Boolean(string="Check Life_Agent",default=False)
 
     # @api.model
     # def _load_nlp_model(self):

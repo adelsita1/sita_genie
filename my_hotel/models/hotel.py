@@ -32,7 +32,12 @@ class Hotel(models.Model):
 	account_id = fields.Many2one('ultra_message.account', string='Account ID')
 
 	object_field = PickleField(string='Python Object')
-
+	question_answer_id = fields.Many2one('question_answer', string = 'Question Answer')
+	answer_status = fields.Selection(
+		related = 'question_answer_id.answer_status',
+		string = "Answer Status",
+		readonly = True
+	)
 	def write(self, vals):
 		if 'object_field' in vals:
 			vals['object_field'] = self.object_field.convert_to_column(vals['object_field'], self)
@@ -43,7 +48,10 @@ class Hotel(models.Model):
 	# 	if 'object_field' in vals:
 	# 		vals['object_field'] = self.object_field.convert_to_column(vals['object_field'], self)
 	# 	return super(Hotel, self).create(vals)
+
 	def process_pdf(self,asked_question=None):
+		answer_stat = None
+		is_life_agent = False
 		if not asked_question:
 			asked_question = "how many pools"
 		print("asked_question", asked_question)
@@ -71,17 +79,42 @@ class Hotel(models.Model):
 			else:
 				translated_text_answer=result[0]["answer"]
 				print("result_answer",translated_text_answer)
+			answer_stat = self.answer_status = 'ai'
 		else:
-
 			pdf_file=self.pdf_ids[0]["pdf_file"]
 			pdf_bytes = base64.b64decode(pdf_file)
-
-
-			print("in ai ")
-
 			chatbot_ai = PDFQuestionAnswerer(pdf_bytes)
 			chatbot_ai.process_pdf()
 			data=chatbot_ai.answer_question(translated_text)
+			# field_info = self.fields_get(['answer_status'])
+			# print("field_info",field_info)
+			# selection_options = field_info['selection']
+			# for option in selection_options:
+			# 	if option[0] == 'ai':
+			# 		answer_status = option[1]
+			answer_s = self.answer_status = 'ai'
+			uncertain_phrases = ["I'm sorry","I don't know","don't know","I'm not sure","That information is not available",
+			                     "Not mentioned in context", "I can't answer that", "I'm not sure","it's not mentioned in the document.",
+			                     "I don't have that information.","I can't answer that","I don't have enough context to answer",
+			                     "I don’t have access to that knowledge","don't have enough information","I am an AI"]
+			for sentence in uncertain_phrases:
+				sentence_lower = sentence.lower()
+				if data['Answer'].lower() == sentence_lower or data['Answer'].lower() in sentence_lower or sentence_lower in data['Answer'].lower():
+					# life_agent = self.env['life.agent'].create({
+					# 	'question': asked_question,
+					# 	'state': 'waiting'
+					# })
+					# self.asked_life_agent(asked_question)
+					data['Answer'] = "please wait for life agent will reply to you"
+					answer_s = self.answer_status = 'life_agent'
+					is_life_agent = True
+
+
+			# if any(phrase in data['Answer'] for phrase in uncertain_phrases):
+
+			print("in if any")
+			answer_stat = answer_s
+			print("answer_stat",answer_stat)
 			if lang['language'] != 'en':
 				print("in if not english else")
 				translator = Translator()
@@ -90,14 +123,15 @@ class Hotel(models.Model):
 			else:
 				translated_text_answer = data["Answer"]
 				print("translated_text_answer", translated_text_answer)
-
 			self.env["question_answer"].create({
 				"question":data["Question"],
 				"answer":data["Answer"],
 				"cost":data["Cost"],
 				"number_of_calls":1,
+				"answer_status":answer_s,
+				"check_life_agent": is_life_agent
 			})
-		return translated_text_answer
+		return translated_text_answer,answer_stat
 	# def process_pdf(self,asked_question=None):
 	#
 	# 	if not asked_question:

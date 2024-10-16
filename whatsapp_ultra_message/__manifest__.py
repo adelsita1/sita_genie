@@ -34,7 +34,7 @@
         'views/res_partner.xml',
         'views/question_answers.xml',
         'views/template_view_chat.xml',
-
+        'views/life_agent.xml',
     ],
     # only loaded in demonstration mode
     # 'demo': [

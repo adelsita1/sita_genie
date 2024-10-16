@@ -10,12 +10,15 @@
 			<field name="arch" type="xml">
 				<xpath expr="//page[@name='internal_notes']" position="after">
 					<page name="sms_messages" string="Messages">
-						<field name="unsubscribe_from_whatsapp_messages" readonly="1"/>
-						<field name="unsubscription_datetime" readonly="1"/>
-
+						<field name="unsubscribe_from_whatsapp_messages" readonly="0"/>
+<!--						<group>-->
 							<field name="whatsapp_message_ids" readonly="1"/>
-
+<!--						</group>-->
 					</page>
+				</xpath>
+				<xpath expr="//field[@name='vat']" position="after">
+					<field name="is_life_agent"/>
+					<field name="life_agent_state" invisible="is_life_agent == False"/>
 				</xpath>
 				<xpath expr="//div[@name='button_box']" position="inside">
 					  <button class="oe_stat_button" type="object" name="action_view_chat"  string="View Chat">

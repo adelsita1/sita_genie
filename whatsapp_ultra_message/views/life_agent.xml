@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="life_agent_tree_view" model="ir.ui.view">
+			<field name="name">life.agent.tree</field>
+			<field name="model">life.agent</field>
+			<field name="arch" type="xml">
+				<tree string="Life Agent">
+					<field name="partner_id"/>
+					<field name="life_Agent_name"/>
+					<field name="question"/>
+					<field name="answer"/>
+					<field name="time_created"/>
+					<field name="time_read"/>
+					<field name="time_done"/>
+					<field name="state" widget="badge"/>
+				</tree>
+			</field>
+		</record>
+
+<!--		<record id="ModelName_search_view" model="ir.ui.view">-->
+<!--			<field name="name">ProjectName.ModelName.search</field>-->
+<!--			<field name="model">ProjectName.ModelName</field>-->
+<!--			<field name="arch" type="xml">-->
+<!--				<search string="ModelTitle">-->
+<!--					<group expand="1" string="Group By">-->
+<!--						<filter string="Example Field" name="example_field" domain="[]"-->
+<!--						        context="{'group_by':'example_field'}"/>-->
+<!--					</group>-->
+<!--				</search>-->
+<!--			</field>-->
+<!--		</record>-->
+
+		<record id="life_agent_act_window" model="ir.actions.act_window">
+			<field name="name">Life Agent</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">life.agent</field>
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					There is no questions.
+				</p>
+			</field>
+		</record>
+
+		<menuitem name="Life Agent" id="life_agent" parent="whats_app_message_menu" action="life_agent_act_window"/>
+
+	</data>
+</odoo>

@@ -22,6 +22,8 @@
                             <group>
                                 <field name="similar_questions"/>
                                 <field name="number_of_calls"/>
+                                <field name="answer_status"/>
+                                <field name="check_life_agent"/>
                             </group>
                         </group>
                     </sheet>

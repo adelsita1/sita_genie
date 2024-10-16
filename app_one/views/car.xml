@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+		<record id="car_form_view" model="ir.ui.view">
+			<field name="name">app_one.car.form</field>
+			<field name="model">car</field>
+			<field name="arch" type="xml">
+				<form string="NewCar">
+					<sheet>
+						<div class="oe_title">
+							<label for="ref"/>
+							<h1>
+								<field name="ref"/>
+							</h1>
+						</div>
+						<div class="oe_title">
+							<label for="name"/>
+							<h4>
+								<field name="name"/>
+							</h4>
+						</div>
+						<group>
+							<group string="Advanced Info">
+								<field name="price"/>
+								<field name="car_phone_number"/>
+								<field name="number_of_places"/>
+							</group>
+							<group string="Additional Info">
+								<field name="model"/>
+								<field name="color_name" />
+								<field name="car_friend"/>
+								<field name="car_driver"/>
+							</group>
+							<group>
+								<field name="description"/>
+							</group>
+						</group>
+					</sheet>
+					<div class="oe_chatter">
+						<field name="message_follower_ids"/>
+						<field name="activity_ids"/>
+						<field name="message_ids"/>
+					</div>
+				</form>
+			</field>
+		</record>
+
+		<record id="car_tree_view" model="ir.ui.view">
+			<field name="name">car.car.tree</field>
+			<field name="model">car</field>
+			<field name="arch" type="xml">
+				<tree string="Car" class="car_style">
+					<field name="name"/>
+					<field name="number_of_places"/>
+					<field name="price"/>
+					<field name="car_driver"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="car_search_view" model="ir.ui.view">
+			<field name="name">car.search</field>
+			<field name="model">car</field>
+			<field name="arch" type="xml">
+				<search string="ModelTitle">
+					<group expand="1" string="Group By">
+						<filter string="car name" name="name" domain="[]"
+						        context="{'group_by':'name'}"/>
+					</group>
+				</search>
+			</field>
+		</record>
+
+		<record id="car_act_window" model="ir.actions.act_window">
+			<field name="name">Car</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">car</field>
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					There is no examples click here to add new ModelTitle.
+				</p>
+			</field>
+		</record>
+		<menuitem id="main_app_one" name="Car"/>
+		<menuitem id="app_one" name="APP menu" parent="main_app_one"/>
+		<menuitem name="Cars" id="car_menu" parent="app_one" action="car_act_window"/>
+	</data>
+</odoo>
