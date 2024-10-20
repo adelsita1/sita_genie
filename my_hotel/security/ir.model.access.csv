@@ -2,4 +2,7 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_my_hotel_hotel,my_hotel.my_hotel,model_hotel,,1,1,1,1
 access_my_hotel_room,my_hotel.my_room,model_room,,1,1,1,1
 access_my_hotel_pdf_file,my_hotel.pdf_file,model_pdf_file,,1,1,1,1
+access_my_hotel_room_type,my_hotel.room_type,model_hotel_room_type,,1,1,1,1
+access_my_hotel_room_rate,my_hotel.room_rate,model_hotel_room_rate,,1,1,1,1
+access_my_hotel_rate_rule,my_hotel.rate_rule,model_hotel_rate_rule,,1,1,1,1
 

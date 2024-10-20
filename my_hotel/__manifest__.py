@@ -26,6 +26,9 @@ Long description of module's purpose
         'views/hotel.xml',
         'views/pdf_file.xml',
         'views/room.xml',
+        'views/room_types.xml',
+        'views/room_rates.xml',
+        'views/rate_rules.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

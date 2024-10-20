@@ -1,6 +1,7 @@
 from odoo import models, fields, api
 from ..utils.open_ai_helper import PDFQuestionAnswerer
 from ..utils.translator import Translator
+from ..utils.format_dict_to_text import format_row
 import base64
 import ast
 import pickle
@@ -53,7 +54,7 @@ class Hotel(models.Model):
 		answer_stat = None
 		is_life_agent = False
 		if not asked_question:
-			asked_question = "how many pools"
+			asked_question = "payment policy"
 		print("asked_question", asked_question)
 		translator = Translator()
 		lang= translator.detect_language(text=asked_question)
@@ -81,9 +82,18 @@ class Hotel(models.Model):
 				print("result_answer",translated_text_answer)
 			answer_stat = self.answer_status = 'ai'
 		else:
-			pdf_file=self.pdf_ids[0]["pdf_file"]
-			pdf_bytes = base64.b64decode(pdf_file)
-			chatbot_ai = PDFQuestionAnswerer(pdf_bytes)
+			pdf_bytes="".encode("utf-8")
+			for file in self.pdf_ids:
+
+				pdf_file=file["pdf_file"]
+				print("pdf_file",type(pdf_file))
+				pdf_bytes += base64.b64decode(pdf_file)
+				print("pdf_bytes", type(pdf_bytes))
+			reservation_data=self.get_rooms_data()
+			# pdf_bytes+=reservation_data
+			# source_data=pdf_bytes.decode("utf-8")
+			# print("source_data",source_data)
+			chatbot_ai = PDFQuestionAnswerer(pdf_bytes,reservation_data)
 			chatbot_ai.process_pdf()
 			data=chatbot_ai.answer_question(translated_text)
 			# field_info = self.fields_get(['answer_status'])
@@ -132,6 +142,22 @@ class Hotel(models.Model):
 				"check_life_agent": is_life_agent
 			})
 		return translated_text_answer,answer_stat
+
+
+	def get_rooms_data(self):
+		fields=["display_name","occupancy","meal_type","date_from","date_to","rate_egp","rate_usd"]
+		rates=self.env["hotel.room.rate"].search([]).read(fields)
+		reservation_text = "\n".join([format_row(item) for item in rates])
+		rules=self.env["hotel.rate.rule"].search([]).mapped("name")
+		rules_text="\n".join([rule for rule in rules])
+		rooms=self.env["hotel.room.type"].search([]).read(["name","description"])
+		rooms_text="\n".join([format_row(room) for room in rooms])
+		all_text= reservation_text  + "\n" + rules_text + "\n" + rooms_text
+		print("all_text",all_text)
+		return all_text
+
+
+
 	# def process_pdf(self,asked_question=None):
 	#
 	# 	if not asked_question:

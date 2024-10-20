@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="room_rates_tree_view" model="ir.ui.view">
+            <field name="name">hotel_room_rate_tee_view</field>
+            <field name="model">hotel.room.rate</field>
+            <field name="arch" type="xml">
+                <tree string="Room Rates" editable="bottom">
+                    <field name="name"/>
+                    <field name="occupancy"/>
+                    <field name="meal_type"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="rate_egp"/>
+                    <field name="rate_usd"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="hotel_room_rate_search_view" model="ir.ui.view">
+            <field name="name">hotel_room_rate.ModelName.search</field>
+            <field name="model">hotel.room.rate</field>
+            <field name="arch" type="xml">
+                <search string="Room Rate">
+                    <group expand="1" string="Group By">
+                        <filter string="Date From" name="date_from" domain="[]"
+                                context="{'group_by':'date_from'}"/>
+                        <filter string="Date To" name="date_to" domain="[]"
+                                context="{'group_by':'date_to'}"/>
+                        <filter string="Room Type" name="room_type" domain="[]"
+                                context="{'group_by':'name'}"/>
+
+                        <filter string="Occupancy" name="occupancy" domain="[]"
+                                context="{'group_by':'occupancy'}"/>
+                    </group>
+                    <field name="name"/>
+                    <field name="date_from" type="date"/>
+                    <field name="date_to" type="date"/>
+
+                </search>
+            </field>
+        </record>
+
+        <record id="room_rate_act_window" model="ir.actions.act_window">
+            <field name="name">Room Rate</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hotel.room.rate</field>
+            <field name="view_mode">tree</field>
+
+        </record>
+
+        <menuitem name="Rates and Rules" id="rates_rules" parent="main_hotel" sequence="90"/>
+        <menuitem name="Room Rates" id="room_rate" parent="rates_rules" action="room_rate_act_window"/>
+
+    </data>
+</odoo>

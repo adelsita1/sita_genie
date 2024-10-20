@@ -3,4 +3,9 @@
 from . import hotel
 from . import room
 from . import pdf_file
+from . import room_type
+from . import room_rates
+from . import rates_rules
+
+
 

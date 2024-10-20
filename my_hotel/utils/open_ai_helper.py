@@ -20,9 +20,10 @@ models=["text-embedding-3-small","text-embedding-ada-002","text-embedding-3-larg
 class PDFQuestionAnswerer:
 
 
-    def __init__(self, pdf_bytes: bytes):
+    def __init__(self, pdf_bytes: bytes,extra_data=None):
         print("laod_env",load_dotenv())
         self.pdf_bytes = pdf_bytes
+        self.extra_data=extra_data
         self.openai_api_key = os.getenv("openai_api_key")
         print("self.openai_api_key",self.openai_api_key)
         # self.excel_path = excel_path
@@ -42,7 +43,10 @@ class PDFQuestionAnswerer:
         text = ""
         for page in pdf.pages:
             text += page.extract_text()
-
+        if self.extra_data is not None :
+            text+= self.extra_data
+        print("text",text)
+        print("text_type",type(text))
         text_splitter = CharacterTextSplitter(chunk_size=100, chunk_overlap=20)
         texts = text_splitter.split_text(text)
         print("Text length: ",texts)
