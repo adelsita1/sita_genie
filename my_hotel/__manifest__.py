@@ -18,23 +18,24 @@ Long description of module's purpose
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','mail','whatsapp_ultra_message'],
+    'depends': ['base', 'mail', 'whatsapp_ultra_message'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
+        'data/reservation_keywords_data.xml',
         'views/hotel.xml',
         'views/pdf_file.xml',
         'views/room.xml',
         'views/room_types.xml',
         'views/room_rates.xml',
         'views/rate_rules.xml',
+        'views/reservation_keyword.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
-        'demo/demo.xml',
+
     ],
     'application': True,
     'installable': True
 }
-

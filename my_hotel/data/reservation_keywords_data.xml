@@ -1,0 +1,22 @@
+<odoo>
+    <data>
+
+          <record id="reservation_reservation" model="hotel.reservation.keywords">
+            <field name="name">reservation</field>
+          </record> <record id="reservation_booking" model="hotel.reservation.keywords">
+            <field name="name">booking</field>
+          </record>
+        <record id="reservation_booking" model="hotel.reservation.keywords">
+            <field name="name">booking</field>
+          </record>
+        <record id="reservation_booking" model="hotel.reservation.keywords">
+            <field name="name">booking</field>
+          </record>
+        <record id="reservation_booking" model="hotel.reservation.keywords">
+            <field name="name">booking</field>
+          </record>
+
+
+
+    </data>
+</odoo>

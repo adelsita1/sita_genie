@@ -7,7 +7,7 @@ import ast
 import pickle
 from langdetect import detect, DetectorFactory
 import langcodes
-
+import gc
 DetectorFactory.seed = 0
 
 # chatbot_ai=None
@@ -50,7 +50,7 @@ class Hotel(models.Model):
 	# 		vals['object_field'] = self.object_field.convert_to_column(vals['object_field'], self)
 	# 	return super(Hotel, self).create(vals)
 
-	def process_pdf(self,asked_question=None):
+	def process_pdf(self,asked_question=None,partner_id=None):
 		answer_stat = None
 		is_life_agent = False
 		if not asked_question:
@@ -61,7 +61,7 @@ class Hotel(models.Model):
 		print("lang",lang)
 		# lang, confidence = langid.classify(asked_question)
 		# lang = detect(asked_question)
-
+		reservation=self.check_reservation_text(asked_question)
 		print("language:", lang['language'])
 		print("score:", lang['score'])
 		if lang['language'] !='en':
@@ -69,8 +69,13 @@ class Hotel(models.Model):
 		else:
 			translated_text = asked_question
 		print("translated_text before spacy", translated_text)
-		result = self.env['question_answer'].find_most_similar_spacy(query=translated_text)
-		print("result after", result)
+
+		if not reservation:
+
+			result = self.env['question_answer'].find_most_similar_spacy(query=translated_text)
+			print("result after", result)
+		else:
+			result = False
 		if result:
 			if lang['language'] != 'en':
 				print("in if not english if")
@@ -93,9 +98,13 @@ class Hotel(models.Model):
 			# pdf_bytes+=reservation_data
 			# source_data=pdf_bytes.decode("utf-8")
 			# print("source_data",source_data)
-			chatbot_ai = PDFQuestionAnswerer(pdf_bytes,reservation_data)
+			whatsapp_context = self.get_recent_whatsapp_context(partner_id)
+			chatbot_ai = PDFQuestionAnswerer(pdf_bytes, additional_context=whatsapp_context,reservation_data=reservation_data)
+
 			chatbot_ai.process_pdf()
 			data=chatbot_ai.answer_question(translated_text)
+			gc.collect()
+			print("data---after gc",chatbot_ai)
 			# field_info = self.fields_get(['answer_status'])
 			# print("field_info",field_info)
 			# selection_options = field_info['selection']
@@ -157,7 +166,25 @@ class Hotel(models.Model):
 		return all_text
 
 
+	def check_reservation_text(self, given_text):
+		keywords=self.env["hotel.reservation.keywords"].sudo().search([]).mapped("name")
+		existence=[True if word in given_text else False for word in keywords]
+		print("existence",existence)
+		print("any_existence",any(existence))
+		return any(existence)
 
+	def get_recent_whatsapp_context(self, partner_id):
+		WhatsAppMessage = self.env['whatsapp_message_log']
+		recent_messages = WhatsAppMessage.search(
+			[("partner_id", "=", partner_id)],
+			order='sent_datetime desc',
+			limit=5
+		)
+		context_messages = []
+		for msg in recent_messages:
+			formatted_msg = f"[{msg.sent_datetime}] {msg.direction}: {msg.message_body}"
+			context_messages.append(formatted_msg)
+		return "\n".join(context_messages)
 	# def process_pdf(self,asked_question=None):
 	#
 	# 	if not asked_question:

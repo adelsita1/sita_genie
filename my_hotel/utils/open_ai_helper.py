@@ -20,16 +20,17 @@ models=["text-embedding-3-small","text-embedding-ada-002","text-embedding-3-larg
 class PDFQuestionAnswerer:
 
 
-    def __init__(self, pdf_bytes: bytes,extra_data=None):
+    def __init__(self, pdf_bytes: bytes,reservation_data=None,additional_context=None):
         print("laod_env",load_dotenv())
         self.pdf_bytes = pdf_bytes
-        self.extra_data=extra_data
+        self.extra_data=reservation_data
         self.openai_api_key = os.getenv("openai_api_key")
         print("self.openai_api_key",self.openai_api_key)
         # self.excel_path = excel_path
         self.embeddings = OpenAIEmbeddings(openai_api_key=self.openai_api_key,model=models[1])
         self.vector_store = None
         self.qa_chain = None
+        self.additional_context = additional_context
         # self.qa_data = self.load_qa_data()
         # Load SentenceTransformer model
         # self.model = SentenceTransformer('all-MiniLM-L6-v2')
@@ -43,11 +44,25 @@ class PDFQuestionAnswerer:
         text = ""
         for page in pdf.pages:
             text += page.extract_text()
+        if self.additional_context:
+            text = f"""
+                Recent WhatsApp Conversation Context for this user use it to know the previous question answering:
+                {self.additional_context}
+
+                PDF Content:
+                {text}
+                """
         if self.extra_data is not None :
-            text+= self.extra_data
+            text=f"""
+            {text}
+            
+            All reservation Data {self.extra_data}
+            
+            """
+
         print("text",text)
         print("text_type",type(text))
-        text_splitter = CharacterTextSplitter(chunk_size=100, chunk_overlap=20)
+        text_splitter = CharacterTextSplitter(chunk_size=250, chunk_overlap=50)
         texts = text_splitter.split_text(text)
         print("Text length: ",texts)
         print("type of text: ",type(texts))
@@ -59,6 +74,17 @@ class PDFQuestionAnswerer:
         self.qa_chain = load_qa_chain(OpenAI(temperature=0, openai_api_key=self.openai_api_key),
                                       chain_type="stuff")
         print("qa chain: ",self.qa_chain)
+
+
+
+
+
+
+
+
+
+
+
 
     # def find_similar_question(self, question: str,faq:list ,similarity_threshold: float = 0.8) -> Tuple[str, str, float]:
     #     if self.qa_data.empty:

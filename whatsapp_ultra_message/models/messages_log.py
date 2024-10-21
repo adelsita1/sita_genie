@@ -130,7 +130,7 @@ class WhatsApp(models.Model):
                 else:
                     print("no life agent line")
             else:
-                answer,answer_s=hotel.process_pdf(asked_question=data["body"])
+                answer,answer_s=hotel.process_pdf(asked_question=data["body"],partner_id=partner.id)
                 if answer_s == 'life_agent':
                     self.asked_life_agent(question=data["body"],partner_id=partner_id)
                 partner.send_message_partner(mobile,answer,answer_s)

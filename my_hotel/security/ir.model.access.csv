@@ -5,4 +5,4 @@ access_my_hotel_pdf_file,my_hotel.pdf_file,model_pdf_file,,1,1,1,1
 access_my_hotel_room_type,my_hotel.room_type,model_hotel_room_type,,1,1,1,1
 access_my_hotel_room_rate,my_hotel.room_rate,model_hotel_room_rate,,1,1,1,1
 access_my_hotel_rate_rule,my_hotel.rate_rule,model_hotel_rate_rule,,1,1,1,1
-
+access_reservation_keywords,my_hotel.reservation,model_hotel_reservation_keywords,,1,1,1,1
