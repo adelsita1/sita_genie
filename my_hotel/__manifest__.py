@@ -18,7 +18,7 @@ Long description of module's purpose
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'mail', 'whatsapp_ultra_message'],
+    'depends': ['base', 'mail', 'whatsapp_ultra_message','crm'],
 
     # always loaded
     'data': [
@@ -31,6 +31,7 @@ Long description of module's purpose
         'views/room_rates.xml',
         'views/rate_rules.xml',
         'views/reservation_keyword.xml',
+        'views/reservation_lead.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

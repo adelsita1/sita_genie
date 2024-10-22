@@ -2,8 +2,7 @@ from odoo import fields, models, api,_
 import requests
 from odoo.exceptions import ValidationError
 import json
-from datetime import datetime
-
+from datetime import datetime, timedelta
 
 from ..tools.UltraMessageClass import ultraMessage
 from ..tools.UltraMessageClass import phone_handler
@@ -206,6 +205,29 @@ class Partner(models.Model):
                     'message_body': mess['body']
                 })
         self.env['whatsapp_message_log'].with_context(prefetch_fields=False).create(messages_to_create)
+
+
+
+    def create_lead(self,data=None):
+        lead_obj=self.env['crm.lead']
+        datetime_limit=datetime.now()-timedelta(days=31)
+        existance_lead=lead_obj.search([('partner_id', '=', self.id),("create_date",">=",datetime_limit)])
+        if existance_lead:
+            if data:
+                pre_data=existance_lead.reservation_data or ""
+                existance_lead.write({
+                    "reservation_data":pre_data+"\n" + data
+                })
+        else:
+            lead_obj.create({
+                'partner_id': self.id,
+                 "name": self.name,
+                "phone":self.mobile or self.phone,
+
+                "nationality":self.country_id.id,
+                "type":"opportunity",
+                "reservation_data":data if data else None
+            })
 
 
 

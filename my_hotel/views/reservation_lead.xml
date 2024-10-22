@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="reservation_lead_form_inherit" model="ir.ui.view">
+            <field name="name">reservation_lead.form</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='lead']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//div[hasclass('o_row_readonly')][2]" position="after">
+                                  <field name="nationality" />
+                     <field name="create_date"/>
+                </xpath>
+                <xpath expr="//page[@name='lead']" position="after">
+                    <page name="Reservation Info">
+                        <field name="reservation_data"/>
+                    </page>
+                </xpath>
+                <xpath expr="//button[@name='action_set_won_rainbowman']" position="after">
+                    <button string="info AI" name="get_reservation_data_from_ai" type="object" class="btn-primary"/>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

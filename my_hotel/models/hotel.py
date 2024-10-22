@@ -1,7 +1,7 @@
 from odoo import models, fields, api
 from ..utils.open_ai_helper import PDFQuestionAnswerer
 from ..utils.translator import Translator
-from ..utils.format_dict_to_text import format_row
+from ..utils.format_dict_to_text import format_row,json_to_short_text
 import base64
 import ast
 import pickle
@@ -51,6 +51,11 @@ class Hotel(models.Model):
 	# 	return super(Hotel, self).create(vals)
 
 	def process_pdf(self,asked_question=None,partner_id=None):
+		print("partner_id ----",partner_id)
+		if partner_id :
+			partner_obj = self.env['res.partner'].search([('id', '=', partner_id)])
+		else:
+			partner_obj = None
 		answer_stat = None
 		is_life_agent = False
 		if not asked_question:
@@ -76,6 +81,9 @@ class Hotel(models.Model):
 			print("result after", result)
 		else:
 			result = False
+			if partner_obj:
+				partner_obj.create_lead()
+
 		if result:
 			if lang['language'] != 'en':
 				print("in if not english if")
@@ -141,6 +149,7 @@ class Hotel(models.Model):
 				print("translated_text_answer",translated_text_answer)
 			else:
 				translated_text_answer = data["Answer"]
+
 				print("translated_text_answer", translated_text_answer)
 			self.env["question_answer"].create({
 				"question":data["Question"],
@@ -150,20 +159,28 @@ class Hotel(models.Model):
 				"answer_status":answer_s,
 				"check_life_agent": is_life_agent
 			})
+			if reservation:
+				data=data["Question"]+ " -> " + data["Answer"]
+				if partner_obj:
+					partner_obj.create_lead(data)
+
 		return translated_text_answer,answer_stat
 
 
 	def get_rooms_data(self):
 		fields=["display_name","occupancy","meal_type","date_from","date_to","rate_egp","rate_usd"]
 		rates=self.env["hotel.room.rate"].search([]).read(fields)
-		reservation_text = "\n".join([format_row(item) for item in rates])
-		rules=self.env["hotel.rate.rule"].search([]).mapped("name")
-		rules_text="\n".join([rule for rule in rules])
+		# reservation_text = "\n".join([format_row(item) for item in rates])
+		rules=self.env["hotel.rate.rule"].search([]).read(["name"])
+		# rules_text="\n".join([rule for rule in rules])
 		rooms=self.env["hotel.room.type"].search([]).read(["name","description"])
-		rooms_text="\n".join([format_row(room) for room in rooms])
-		all_text= reservation_text  + "\n" + rules_text + "\n" + rooms_text
-		print("all_text",all_text)
-		return all_text
+		dic_all = rates+rules+rooms
+		text_return = json_to_short_text(dic_all)
+
+		# rooms_text="\n".join([format_row(room) for room in rooms])
+		# all_text= reservation_text  + "\n" + rules_text + "\n" + rooms_text
+		print("all_text",text_return)
+		return text_return
 
 
 	def check_reservation_text(self, given_text):

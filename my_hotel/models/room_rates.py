@@ -15,10 +15,10 @@ class RoomRates(models.Model):
         ("6 adults", "6 Adults"),
         ("7 adults", "7 Adults"),
         ("8 adults", "8 Adults"),
-    ],requried=True,default="single",string="Occupancy (\"Adults\")")
+    ],required=True,default="single",string="Occupancy (\"Adults\")")
     meal_type=fields.Selection([
         ("bed_only","Bed Only"),
-        ("bed_breakfast","Bead and Breakfast"),
+        ("bed_breakfast","Bed and Breakfast"),
         ("half_board" ,"Half Board"),
         ("all_inclusive_soft","All Inclusive Soft"),
         ("all_inclusive_hard","All Inclusive Hard")],default="bed_only",string="Meal Type"

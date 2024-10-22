@@ -7,6 +7,7 @@ from . import room_type
 from . import room_rates
 from . import rates_rules
 from . import reservation_key_words
+from . import reservation_lead
 
 
 

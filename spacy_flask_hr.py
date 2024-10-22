@@ -36,7 +36,7 @@ def get_similarity(**kw):
         print("questions[i]",questions[i])
         print("sim[i]",similarities[i])
         # qa_record = qa_records[i]
-        if similarities[i] <0.8:
+        if similarities[i] <0.98:
             continue
         results.append({
             'question': questions[i],

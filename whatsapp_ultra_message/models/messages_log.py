@@ -11,7 +11,7 @@ class WhatsApp(models.Model):
     _order='sent_datetime desc'
 
     partner_id=fields.Many2one('res.partner',string='Contact')
-    mobile=fields.Char(string='Mobile Number',compute='adjust_phone_number',store=1)
+    mobile=fields.Char(string='Mobile Number',store=1)
 
     message_body=fields.Text("Message Body")
 
