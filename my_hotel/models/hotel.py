@@ -78,6 +78,10 @@ class Hotel(models.Model):
 		if not reservation:
 
 			result = self.env['question_answer'].find_most_similar_spacy(query=translated_text)
+			if result:
+				result=result["result"] #for spacy controller
+			# result = self.env['question_answer'].find_similar_question(asked_question=translated_text)
+
 			print("result after", result)
 		else:
 			result = False
@@ -89,9 +93,11 @@ class Hotel(models.Model):
 				print("in if not english if")
 				translator = Translator()
 				translated_text_answer = translator.translate(result[0]["answer"], lang['language'],True)
+				translated_text_answer = self.env["hotel.translation.rules"].replace_words(translated_text_answer,lang['language'] )
 				print("translated_text_answer",translated_text_answer)
 			else:
 				translated_text_answer=result[0]["answer"]
+				translated_text_answer = self.env["hotel.translation.rules"].replace_words(translated_text_answer, "en")
 				print("result_answer",translated_text_answer)
 			answer_stat = self.answer_status = 'ai'
 		else:
@@ -133,6 +139,7 @@ class Hotel(models.Model):
 					# })
 					# self.asked_life_agent(asked_question)
 					data['Answer'] = "please wait for life agent will reply to you"
+
 					answer_s = self.answer_status = 'life_agent'
 					is_life_agent = True
 
@@ -146,9 +153,12 @@ class Hotel(models.Model):
 				print("in if not english else")
 				translator = Translator()
 				translated_text_answer = translator.translate(data["Answer"], lang['language'],True)
-				print("translated_text_answer",translated_text_answer)
+				print("translated_text_answer before", translated_text_answer)
+				translated_text_answer = self.env["hotel.translation.rules"].replace_words(translated_text_answer,lang['language'])
+				print("translated_text_answer after",translated_text_answer)
 			else:
 				translated_text_answer = data["Answer"]
+				translated_text_answer = self.env["hotel.translation.rules"].replace_words(translated_text_answer,"en")
 
 				print("translated_text_answer", translated_text_answer)
 			self.env["question_answer"].create({

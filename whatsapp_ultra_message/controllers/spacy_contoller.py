@@ -67,16 +67,16 @@ class SPacyController(http.Controller):
         qa_records = request.env['question_answer'].sudo().search([])
         result = []
 
-        if similarities[most_similar_index] >= 0:
+        if similarities[most_similar_index] >= 0.85:
             result.append({
                 'question': qa_records[most_similar_index].question,
                 'answer': qa_records[most_similar_index].answer,
                 'similarity': most_similar_index,
             })
             # Increment the call count
-            qa_records[most_similar_index].number_of_calls += 1
-            qa_records[most_similar_index].similar_questions = qa_records[most_similar_index].similar_questions + str(query) + '\n' if str(
-                query) not in qa_records[most_similar_index].similar_questions else qa_records[most_similar_index].similar_questions
+            # qa_records[most_similar_index].number_of_calls += 1
+            # qa_records[most_similar_index].similar_questions = qa_records[most_similar_index].similar_questions + str(query) + '\n' if str(
+            #     query) not in qa_records[most_similar_index].similar_questions else qa_records[most_similar_index].similar_questions
 
         return result
 

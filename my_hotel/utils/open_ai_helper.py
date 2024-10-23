@@ -3,8 +3,9 @@ import os
 import json
 from typing import List, Tuple,Dict
 import pandas as pd
-
+from sentence_transformers import SentenceTransformer, util
 from langchain_openai import OpenAIEmbeddings
+import torch
 from memory_profiler import profile
 log_file=open("/home/catherinr/Desktop/SITA/odoo/odoo17/memory.log","w+")
 # from langchain.document_loaders import PyPDFLoader,PdfReader
@@ -120,10 +121,10 @@ class PDFQuestionAnswerer:
         # Construct the prompt
         prompt = self._build_prompt(text, categories)
         try:
-
+            # model_old="gpt-4o-mini
             client = Openai(api_key=self.openai_api_key)
             response = client.chat.completions.create(
-                model="gpt-4o-mini",
+                model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system",
                      "content": "You are a precise information extraction assistant. Extract only the specific information requested and respond in a structured format."},
@@ -187,22 +188,7 @@ class PDFQuestionAnswerer:
 
 
 
-    # def find_similar_question(self, question: str,faq:list ,similarity_threshold: float = 0.8) -> Tuple[str, str, float]:
-    #     if self.qa_data.empty:
-    #         return None, None, None
-    #     query_embedding = self.model.encode(question, convert_to_tensor=True)
-    #     stored_questions = faq.mapped("questions")
-    #     stored_question_embeddings = self.model.encode(stored_questions, convert_to_tensor=True)
-    #
-    #     # Compute cosine similarities
-    #     similarities = util.pytorch_cos_sim(query_embedding, stored_question_embeddings)
-    #
-    #     # Find the most similar question based on similarity threshold
-    #     max_similarity, idx = torch.max(similarities, dim=1)
-    #     if max_similarity.item() >= similarity_threshold:
-    #         return self.qa_data.iloc[idx.item()]['Question'], self.qa_data.iloc[idx.item()]['Answer'], 0.0
-    #
-    #     return None, None, None
+
     @profile
     def answer_question(self, question: str) -> Tuple[str, float]:
         # similar_question, answer, cost = self.find_similar_question(question)

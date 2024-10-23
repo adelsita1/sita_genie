@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 from memory_profiler import profile
 class Translator:
-	@profile
+
 	def __init__(self):
 		print("laod_env", load_dotenv())
 		self.key = os.getenv("microsoft_api_key")
@@ -13,7 +13,7 @@ class Translator:
 		self.server_location =  "westeurope"
 		self.path = '/translate'
 		self.constructed_url = self.endpoint + self.path
-	@profile
+
 	def detect_language(self, text):
 		print("in detect_language")
 		endpoint = "https://api.cognitive.microsofttranslator.com/detect?api-version=3.0"
@@ -34,7 +34,7 @@ class Translator:
 			print(f"Error occurred: {e}")
 			return None
 
-	@profile
+
 	def translate(self, question, language,flag):
 		headers = {
 			'Ocp-Apim-Subscription-Key': self.key,

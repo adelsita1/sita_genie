@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="translation_rule_tree_view" model="ir.ui.view">
+            <field name="name">hotel_rate.tree</field>
+            <field name="model">hotel.translation.rules</field>
+            <field name="arch" type="xml">
+                <tree string="Translation Rule" editable="bottom">
+                    <field name="old_text"/>
+                   <field name="lang"/>
+                   <field name="iso_code"/>
+                    <field name="new_text"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="translation_rule_search_view" model="ir.ui.view">
+            <field name="name">hotel_translation.search</field>
+            <field name="model">hotel.translation.rules</field>
+            <field name="arch" type="xml">
+                <search string="Search Translation Rule">
+                   <field name="old_text"/>
+                   <field name="lang"/>
+                   <field name="iso_code"/>
+                    <field name="new_text"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="translation_rule_act_window" model="ir.actions.act_window">
+            <field name="name">Translation Rule</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hotel.translation.rules</field>
+
+            <field name="view_mode">tree</field>
+        </record>
+
+        <menuitem name="Translation Rules" id="translation" parent="my_hotel_options" action="translation_rule_act_window"/>
+
+    </data>
+</odoo>

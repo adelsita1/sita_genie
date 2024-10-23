@@ -32,6 +32,7 @@ Long description of module's purpose
         'views/rate_rules.xml',
         'views/reservation_keyword.xml',
         'views/reservation_lead.xml',
+        'views/translation_rule.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

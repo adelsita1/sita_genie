@@ -26,5 +26,9 @@
 
             </field>
         </record>
+
+        <menuitem name="Reservation Leads" id="reservations_parent" parent="main_hotel" sequence="80"/>
+        <menuitem name="Reservation Leads" id="reservations" parent="reservations_parent" sequence="1" action="crm.crm_lead_action_pipeline"/>
+
     </data>
 </odoo>

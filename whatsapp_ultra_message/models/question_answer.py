@@ -50,13 +50,13 @@ class QuestionAnswers(models.Model):
     #     question_vectors = np.array([self.get_sentence_vector(self.preprocess_text(q)) for q in questions])
     #     return True
     @api.model
-    def find_similar_question(self, asked_question: str='', similarity_threshold: float = 0.8):
+    def find_similar_question(self, asked_question: str='', similarity_threshold: float = 0.83):
         # asked_question ="how many pools?"
 
 
         faq=self.env['question_answer'].search([])
         if not len(faq):
-            return None, None, None
+            return False
 
         model = SentenceTransformer('all-MiniLM-L6-v2')
         query_embedding = model.encode(asked_question, convert_to_tensor=True)
@@ -70,6 +70,8 @@ class QuestionAnswers(models.Model):
 
         # Find the most similar question based on similarity threshold
         max_similarity, idx = torch.max(similarities, dim=1)
+        print("max_similarity",idx)
+        print("max_similarity",max_similarity)
         if max_similarity.item() >= similarity_threshold:
             # faq[idx].write({
             #
@@ -80,16 +82,21 @@ class QuestionAnswers(models.Model):
             # print("answer", answer)
             # print("asked_question", asked_question)
             # print("faq[idx].similar_questions", faq[idx].similar_questions)
-            faq[idx].write({
-                "similar_questions":faq[idx].similar_questions+str(asked_question)+'\n' if  str(asked_question) not in faq[idx].similar_questions else faq[idx].similar_questions,
-                "number_of_calls":faq[idx].number_of_calls+1
-            })
+            # faq[idx].write({
+            #     "similar_questions":faq[idx].similar_questions+str(asked_question)+'\n' if  str(asked_question) not in faq[idx].similar_questions else faq[idx].similar_questions,
+            #     "number_of_calls":faq[idx].number_of_calls+1
+            # })
+            answers=[{
+                'question': asked_question,
+                'answer': answer,
+                'similarity': max_similarity,
+            }]
             # self.env.cr.commit()
             # self.env.cr.savepoint()
 
-            return asked_question, answer, 0.0
+            return answers
 
-        return None, None, None
+        return False
 
     @api.model
     def _get_vectorizer(self):
@@ -140,8 +147,8 @@ class QuestionAnswers(models.Model):
 
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         print(base_url)
-        # url=f"{base_url}/spacy"
-        url='http://127.0.0.1:5000/spacy'
+        url=f"{base_url}/spacy"
+        # url='http://127.0.0.1:5000/spacy'
         questions = self.env['question_answer'].search([]).mapped('question')
         answers=self.env['question_answer'].search([]).mapped('answer')
         print("len of questions",len(questions))

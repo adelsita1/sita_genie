@@ -24,7 +24,7 @@
             <field name="res_model">ultra_message.account</field>
             <field name="view_mode">tree</field>
         </record>
-        <menuitem name="WhatsApp Messages" id="whats_app_ultra_message" sequence="2"/>
+        <menuitem name="WhatsApp Messages" id="whats_app_ultra_message" sequence="2" web_icon="whatsapp_ultra_message,static/description/WhatsApp.png"/>
 	  <menuitem name="Configurations" id="configurations_ultra_message_settings" parent="whats_app_ultra_message" sequence="200"/>
 
 
