@@ -9,7 +9,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 class SPacyController(http.Controller):
     # model = spacy.load('en_core_web_md')
-    model = spacy.load('en_core_web_md')
+    model = spacy.load('en_core_web_lg')
     print("here")
 
     # @http.route('/spacy', type="json", auth="public", website=True, method=['POST','GET'])
@@ -67,7 +67,7 @@ class SPacyController(http.Controller):
         qa_records = request.env['question_answer'].sudo().search([])
         result = []
 
-        if similarities[most_similar_index] >= 0.85:
+        if similarities[most_similar_index] >= 0.98:
             result.append({
                 'question': qa_records[most_similar_index].question,
                 'answer': qa_records[most_similar_index].answer,

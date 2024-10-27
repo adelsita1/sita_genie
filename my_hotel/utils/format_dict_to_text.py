@@ -1,7 +1,8 @@
 def json_to_short_text(data):
     text_chunks = []
     for record in data:
-        del record["id"]
+        if "id" in record :
+            del record["id"]
         chunk = ', '.join(f"{key}: {value}" for key, value in record.items())
         # Limit the size of each chunk
         while len(chunk) > 500:

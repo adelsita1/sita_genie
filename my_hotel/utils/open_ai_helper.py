@@ -6,8 +6,7 @@ import pandas as pd
 from sentence_transformers import SentenceTransformer, util
 from langchain_openai import OpenAIEmbeddings
 import torch
-from memory_profiler import profile
-log_file=open("/home/catherinr/Desktop/SITA/odoo/odoo17/memory.log","w+")
+
 # from langchain.document_loaders import PyPDFLoader,PdfReader
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
@@ -26,7 +25,7 @@ models=["text-embedding-3-small","text-embedding-ada-002","text-embedding-3-larg
 class PDFQuestionAnswerer:
     # def __init__(self):
 
-    @profile
+
     def __init__(self, pdf_bytes: bytes = None,reservation_data=None,additional_context=None):
         print("laod_env",load_dotenv())
         self.pdf_bytes = pdf_bytes
@@ -47,7 +46,7 @@ class PDFQuestionAnswerer:
         # Load SentenceTransformer model
         # self.model = SentenceTransformer('all-MiniLM-L6-v2')
 
-    @profile
+
     def process_pdf(self):
 
         pdf_file = io.BytesIO(self.pdf_bytes)
@@ -189,7 +188,7 @@ class PDFQuestionAnswerer:
 
 
 
-    @profile
+
     def answer_question(self, question: str) -> Tuple[str, float]:
         # similar_question, answer, cost = self.find_similar_question(question)
        # answer=False

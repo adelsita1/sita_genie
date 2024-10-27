@@ -1,9 +1,6 @@
 import torch
 from sentence_transformers import SentenceTransformer, util
 
-
-
-
 def find_similar_question(self, question: str,faq:list ,similarity_threshold: float = 0.8) -> Tuple[str, str, float]:
     if self.qa_data.empty:
         return None, None, None

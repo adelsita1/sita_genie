@@ -18,8 +18,11 @@ Long description of module's purpose
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'mail', 'whatsapp_ultra_message','crm'],
-
+    'depends': ['base', 'mail', 'whatsapp_ultra_message', 'crm'],
+    'external_dependencies': {
+        'python': ['PyPDF2', 'langchain',"langchain_community","python-dotenv","openai","langchain_openai","torch",
+                   "requests","dotenv","uuid","sentence_transformers","spacy","numpy"],  # List any required Python libraries here
+    },
     # always loaded
     'data': [
         'security/ir.model.access.csv',
@@ -33,6 +36,7 @@ Long description of module's purpose
         'views/reservation_keyword.xml',
         'views/reservation_lead.xml',
         'views/translation_rule.xml',
+
     ],
     # only loaded in demonstration mode
     'demo': [
