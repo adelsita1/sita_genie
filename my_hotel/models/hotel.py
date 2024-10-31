@@ -56,6 +56,8 @@ class Hotel(models.Model):
     # 	return super(Hotel, self).create(vals)
 
     def process_pdf(self, asked_question=None, partner_id=None):
+        chatbot_ai = PDFQuestionAnswerer()
+
         print("partner_id ----", partner_id)
         if partner_id:
             partner_obj = self.env['res.partner'].search([('id', '=', partner_id)])
@@ -66,20 +68,23 @@ class Hotel(models.Model):
         if not asked_question:
             asked_question = "payment policy"
         print("asked_question", asked_question)
+
         translator = Translator()
         lang = translator.detect_language(text=asked_question)
         print("lang", lang)
         # lang, confidence = langid.classify(asked_question)
         # lang = detect(asked_question)
-        reservation = self.check_reservation_text(asked_question)
+        # reservation = self.check_reservation_text(asked_question)
         print("language:", lang['language'])
         print("score:", lang['score'])
         if lang['language'] != 'en':
-            translated_text = translator.translate(asked_question, lang['language'], False)
+            # translated_text = translator.translate(asked_question, lang['language'], False)
+            translated_text = chatbot_ai.detect_and_translate(asked_question, target_language="English")
+
         else:
             translated_text = asked_question
         print("translated_text before spacy", translated_text)
-
+        reservation = self.check_reservation_text(translated_text)
         if not reservation:
 
             result = self.env['question_answer'].find_most_similar_spacy(query=translated_text)
@@ -96,8 +101,9 @@ class Hotel(models.Model):
         if result:
             if lang['language'] != 'en':
                 print("in if not english if")
-                translator = Translator()
-                translated_text_answer = translator.translate(result[0]["answer"], lang['language'], True)
+                # translator = Translator()
+                # translated_text_answer = translator.translate(result[0]["answer"], lang['language'], True)
+                translated_text_answer = chatbot_ai.detect_and_translate(result[0]["answer"], target_language=lang['language'])
                 translated_text_answer = self.env["hotel.translation.rules"].replace_words(translated_text_answer,
                                                                                            lang['language'])
                 print("translated_text_answer", translated_text_answer)
@@ -118,10 +124,10 @@ class Hotel(models.Model):
             # source_data=pdf_bytes.decode("utf-8")
             # print("source_data",source_data)
             whatsapp_context = self.get_recent_whatsapp_context(partner_id)
-            chatbot_ai = PDFQuestionAnswerer(pdf_bytes, additional_context=whatsapp_context,
-                                             reservation_data=reservation_data)
 
-            chatbot_ai.process_pdf()
+
+            chatbot_ai.process_pdf(pdf_bytes, additional_context=whatsapp_context,
+                                             reservation_data=reservation_data)
             data = chatbot_ai.answer_question(translated_text)
             gc.collect()
             print("data---after gc", chatbot_ai)
@@ -160,8 +166,11 @@ class Hotel(models.Model):
             print("answer_stat", answer_stat)
             if lang['language'] != 'en':
                 print("in if not english else")
-                translator = Translator()
-                translated_text_answer = translator.translate(data["Answer"], lang['language'], True)
+                # translator = Translator()
+                # translated_text_answer = translator.translate(data["Answer"], lang['language'], True)
+                translated_text_answer = chatbot_ai.detect_and_translate(data["Answer"],
+                                                                         target_language=lang['language'])
+
                 print("translated_text_answer before", translated_text_answer)
                 translated_text_answer = self.env["hotel.translation.rules"].replace_words(translated_text_answer,
                                                                                            lang['language'])
@@ -203,9 +212,7 @@ class Hotel(models.Model):
 
     def check_reservation_text(self, given_text):
         keywords = self.env["hotel.reservation.keywords"].sudo().search([]).mapped("name")
-        existence = [True if word in given_text else False for word in keywords]
-        print("existence", existence)
-        print("any_existence", any(existence))
+        existence = [True if word.lower() in given_text.lower() else False for word in keywords]
         return any(existence)
 
     def get_recent_whatsapp_context(self, partner_id):
@@ -223,64 +230,3 @@ class Hotel(models.Model):
             })
 
         return context_messages
-# def process_pdf(self,asked_question=None):
-#
-# 	if not asked_question:
-# 		asked_question = "how many pools"
-# 	question, answer, cost = self.env['question_answer'].find_similar_question(asked_question=asked_question)
-# 	# result = self.env['question_answer'].find_most_similar(query=asked_question)
-# 	# print("result",result)
-# 	pdf_file=self.pdf_ids[0]["pdf_file"]
-# 	pdf_bytes = base64.b64decode(pdf_file)
-# #
-# 	result_answer=answer
-# 	print("question before ai:",question)
-# 	print("answer before ai:",answer)
-# 	print("cost before ai:",cost)
-# 	if question is None and answer is None and cost is None:
-# 		print("in ai ")
-# 		# question = self.env['question_answer']
-# 		chatbot_ai = PDFQuestionAnswerer(pdf_bytes)
-# 		chatbot_ai.process_pdf()
-# 		data=chatbot_ai.answer_question(asked_question)
-# 		result_answer=data["Answer"]
-#
-# 		self.env["question_answer"].create({
-# 			"question":data["Question"],
-# 			"answer":data["Answer"],
-# 			"cost":data["Cost"],
-# 			"number_of_calls":1,
-# 		})
-# 	return result_answer
-#
-#
-#
-# 	# self.answer_question(question,chatbot_ai)
-#
-# # (chatbot_ai)
-
-# 	todo separate
-# def answer_question(self,question,chatbot_ai):
-# 	faq = self.env["question_answer"].search([])
-# 	print("faq",faq.read())
-# 	print("question",question)
-# 	chatbot_ai.find_similar_question(question,faq)
-#
-
-# def find_similar_question(self, question: str, similarity_threshold: float = 0.8) :
-# 	# if self.qa_data.empty:
-# 	# 	return None, None, None
-# 	query_embedding = self.model.encode(question, convert_to_tensor=True)
-# 	faq=self.env["question_answer"].search([])
-# 	stored_questions = faq.mapped('question')
-# 	stored_question_embeddings = self.model.encode(stored_questions, convert_to_tensor=True)
-#
-# 	# Compute cosine similarities
-# 	similarities = util.pytorch_cos_sim(query_embedding, stored_question_embeddings)
-#
-# 	# Find the most similar question based on similarity threshold
-# 	max_similarity, idx = torch.max(similarities, dim=1)
-# 	if max_similarity.item() >= similarity_threshold:
-# 		return self.qa_data.iloc[idx.item()]['Question'], self.qa_data.iloc[idx.item()]['Answer'], 0.0
-#
-# 	return None, None, None

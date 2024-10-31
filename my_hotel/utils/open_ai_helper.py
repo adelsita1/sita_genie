@@ -1,6 +1,8 @@
+import ast
 import gc
 import os
 import json
+import re
 from typing import List, Tuple,Dict
 import pandas as pd
 from sentence_transformers import SentenceTransformer, util
@@ -23,32 +25,61 @@ from pdfminer.high_level import extract_text_to_fp
 from pdfminer.layout import LAParams
 models=["text-embedding-3-small","text-embedding-ada-002","text-embedding-3-large"]
 class PDFQuestionAnswerer:
-    # def __init__(self):
 
+    # todo
+    # _instance = None  # Class attribute to store the single instance
+    #
+    # def __new__(cls):
+    #     if cls._instance is None:
+    #         cls._instance = super(PDFQuestionAnswerer, cls).__new__(cls)
+    #     return cls._instance
 
-    def __init__(self, pdf_bytes: bytes = None,reservation_data=None,additional_context=None):
-        print("laod_env",load_dotenv())
-        self.pdf_bytes = pdf_bytes
-        self.extra_data=reservation_data
+    def __init__(self):
+        load_dotenv()
+        self.pdf_bytes = None
+        self.extra_data = None
         self.openai_api_key = os.getenv("openai_api_key")
-        print("self.openai_api_key",self.openai_api_key)
-        # self.client = OpenAI(self.openai_api_key)
-
-
-        # client.api_key = self.openai_api_key
-        # self.excel_path = excel_path
+        self.client = Openai(api_key=self.openai_api_key)
         self.embeddings = OpenAIEmbeddings(openai_api_key=self.openai_api_key,model=models[1])
         self.vector_store = None
         self.qa_chain = None
+        self.additional_context = None
+
+
+    def detect_and_translate(self,text, target_language="English"):
+        # Create a prompt for language detection and translation
+
+
+        prompt = f"Detect the language of the following text, and translate it to {target_language}:\n\n{text}\n\nRespond with the detected language, followed by the translation."
+
+        # client = Openai(api_key=self.openai_api_key)
+        response = self.client.chat.completions.create(
+            model="gpt-4o",
+            # engine="text-davinci-004",  # You can use other engines as well, like gpt-4 if available.
+            messages=[
+                {"role": "system",
+                 "content": "You are a perfect translator Detect the language of the following text, and translate it "
+                            "to {target_language}:\n\n{text}\n\n Respond in JSON format with the detected language "
+                            "and translation"},
+                {"role": "user", "content": prompt}
+            ],
+
+        )
+
+        # Get the response text
+        print("response", response)
+
+        result = response.choices[0].message.content.strip().replace("'", "").replace("\n", "")
+        cleaned_text = re.sub(r"^```json|```$", "", result.strip(), flags=re.MULTILINE)
+        print("cleaned_text", ast.literal_eval(cleaned_text))
+        translated_text=ast.literal_eval(cleaned_text)["translation"]
+        return translated_text
+
+    def process_pdf(self,pdf_bytes: bytes = None,reservation_data=None,additional_context=None):
+
+        self.pdf_bytes = pdf_bytes
+        self.extra_data = reservation_data
         self.additional_context = additional_context
-
-        # self.qa_data = self.load_qa_data()
-        # Load SentenceTransformer model
-        # self.model = SentenceTransformer('all-MiniLM-L6-v2')
-
-
-    def process_pdf(self):
-
         pdf_file = io.BytesIO(self.pdf_bytes)
         print("pdf_file",type(pdf_file))
         pdf = PdfReader(pdf_file)
@@ -121,8 +152,8 @@ class PDFQuestionAnswerer:
         prompt = self._build_prompt(text, categories)
         try:
             # model_old="gpt-4o-mini
-            client = Openai(api_key=self.openai_api_key)
-            response = client.chat.completions.create(
+            # client = Openai(api_key=self.openai_api_key)
+            response = self.client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system",
@@ -178,60 +209,23 @@ class PDFQuestionAnswerer:
         return prompt
 
 
-
-
-
-
-
-
-
-
-
-
-
     def answer_question(self, question: str) -> Tuple[str, float]:
-        # similar_question, answer, cost = self.find_similar_question(question)
-       # answer=False
-        # if answer:
-
-            # print(f"Similar question found: {similar_question}")
-            # return answer, cost
-
         if not self.vector_store or not self.qa_chain:
             raise ValueError("PDF has not been processed. Call load_and_process_pdf() first.")
-
         docs = self.vector_store.similarity_search(question)
 
         with get_openai_callback() as cb:
             answer = self.qa_chain.run(input_documents=docs, question=question)
             cost = cb.total_cost
 
-
-
-
-
-
-
-        # Create a new DataFrame for the new entry
-        # new_entry = pd.DataFrame([{'Question': question, 'Answer': answer, 'Cost': cost}])
-        # Concatenate the new entry with the existing DataFrame
-        # self.qa_data = pd.concat([self.qa_data, new_entry], ignore_index=True)
-        # self.save_qa_data()
-        # self.clear_memory()
-
         data={'Question': question, 'Answer': answer, 'Cost': cost}
         print("data return from ai >>>>",data)
         return data
 
-    def __del__(self):
-        """Destructor to ensure cleanup"""
-        if hasattr(self, 'pdf_bytes'):
-            del self.pdf_bytes
-            del self.vector_store
-            del self.qa_chain
-        gc.collect()
-    # def clear_memory(self):
-    #     del self.pdf_bytes
-    #     del self.vector_store
-    #     del self.qa_chain
+    # def __del__(self):
+    #     """Destructor to ensure cleanup"""
+    #     if hasattr(self, 'pdf_bytes'):
+    #         del self.pdf_bytes
+    #         # del self.vector_store
+    #         del self.qa_chain
     #     gc.collect()
