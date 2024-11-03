@@ -1,7 +1,7 @@
 from odoo import models, fields, api
 from ..utils.open_ai_helper import PDFQuestionAnswerer
 from ..utils.translator import Translator
-from ..utils.format_dict_to_text import format_row, json_to_short_text
+from ..utils.format_dict_to_text import format_row, json_to_short_text, format_phone_number
 import base64
 import ast
 import pickle
@@ -175,6 +175,8 @@ class Hotel(models.Model):
                 translated_text_answer = self.env["hotel.translation.rules"].replace_words(translated_text_answer,
                                                                                            lang['language'])
                 print("translated_text_answer after", translated_text_answer)
+                if "+20" in  translated_text_answer:
+                    format_phone_number(translated_text_answer)
             else:
                 translated_text_answer = data["Answer"]
                 translated_text_answer = self.env["hotel.translation.rules"].replace_words(translated_text_answer, "en")

@@ -26,7 +26,7 @@ class Partner(models.Model):
             if partner.is_life_agent and partner.life_agent_state == 'free':
                 self.env['life.agent'].check_and_reassign_questions(partner)
 
-    def send_message_partner(self, phone, message,answer_s):
+    def send_message_partner(self, phone, message,answer_s=None):
         if self.unsubscribe_from_whatsapp_messages:
             return
         phone = phone_handler(phone)

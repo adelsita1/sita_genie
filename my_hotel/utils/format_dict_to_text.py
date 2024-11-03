@@ -1,3 +1,5 @@
+import phonenumbers
+from phonenumbers import PhoneNumberFormat
 def json_to_short_text(data):
     text_chunks = []
     for record in data:
@@ -17,3 +19,23 @@ def format_row(row):
 
     del row["id"]
     return " ,".join(f"{key.replace("_"," ").title()}:{row[key]}"  for key in row.keys())
+
+
+
+
+def format_phone_number(number, region='EG'):
+    try:
+        parsed_number = phonenumbers.parse(number, region)
+        formatted_number = phonenumbers.format_number(parsed_number, PhoneNumberFormat.E164)
+        return formatted_number
+    except phonenumbers.NumberParseException as e:
+        print(f"Error: {e}")
+        return None
+def extract_phone_numbers(text, region='US'):
+    phone_numbers = []
+    for match in phonenumbers.PhoneNumberMatcher(text, region):
+        phone_number = phonenumbers.format_number(match.number, phonenumbers.PhoneNumberFormat.E164)
+        phone_numbers.append(phone_number)
+    return phone_numbers
+# Example usage
+# print(format_phone_number("+201234567890"))
