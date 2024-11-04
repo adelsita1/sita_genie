@@ -7,7 +7,7 @@ from memory_profiler import profile
 class Translator:
 
 	def __init__(self):
-		print("laod_env", load_dotenv())
+		load_dotenv()
 		self.key = os.getenv("microsoft_api_key")
 		self.endpoint = "https://api.cognitive.microsofttranslator.com/"
 		self.server_location =  "westeurope"

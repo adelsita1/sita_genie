@@ -5,11 +5,16 @@ from ..utils.format_dict_to_text import format_row, json_to_short_text, format_p
 import base64
 import ast
 import pickle
+import re
 from langdetect import detect, DetectorFactory
 import langcodes
 import gc
+# from arabic_reshaper import reshape
+# from bidi.algorithm import get_display
 
 DetectorFactory.seed = 0
+
+
 
 
 # chatbot_ai=None
@@ -44,6 +49,7 @@ class Hotel(models.Model):
         readonly=True
     )
 
+
     def write(self, vals):
         if 'object_field' in vals:
             vals['object_field'] = self.object_field.convert_to_column(vals['object_field'], self)
@@ -68,18 +74,22 @@ class Hotel(models.Model):
         if not asked_question:
             asked_question = "payment policy"
         print("asked_question", asked_question)
-
-        translator = Translator()
-        lang = translator.detect_language(text=asked_question)
+        #
+        # translator = Translator()
+        # lang = translator.detect_language(text=asked_question)
+        lang = chatbot_ai.detect_language(text=asked_question)
         print("lang", lang)
         # lang, confidence = langid.classify(asked_question)
         # lang = detect(asked_question)
         # reservation = self.check_reservation_text(asked_question)
-        print("language:", lang['language'])
-        print("score:", lang['score'])
-        if lang['language'] != 'en':
+        # print("language:", lang['language'])
+        # print("score:", lang['score'])
+        if lang != 'en':
             # translated_text = translator.translate(asked_question, lang['language'], False)
-            translated_text = chatbot_ai.detect_and_translate(asked_question, target_language="English")
+            translated_text_answer = self.env["hotel.translation.rules"].replace_words(asked_question,lang)
+            print(" after translated_text_answer in ", translated_text_answer)
+            translated_text = chatbot_ai.detect_and_translate(translated_text_answer, target_language="English")
+
 
         else:
             translated_text = asked_question
@@ -99,13 +109,13 @@ class Hotel(models.Model):
                 partner_obj.create_lead()
 
         if result:
-            if lang['language'] != 'en':
+            if lang != 'en':
                 print("in if not english if")
                 # translator = Translator()
                 # translated_text_answer = translator.translate(result[0]["answer"], lang['language'], True)
-                translated_text_answer = chatbot_ai.detect_and_translate(result[0]["answer"], target_language=lang['language'])
+                translated_text_answer = chatbot_ai.detect_and_translate(result[0]["answer"], target_language=lang)
                 translated_text_answer = self.env["hotel.translation.rules"].replace_words(translated_text_answer,
-                                                                                           lang['language'])
+                                                                                           lang)
                 print("translated_text_answer", translated_text_answer)
             else:
                 translated_text_answer = result[0]["answer"]
@@ -129,6 +139,11 @@ class Hotel(models.Model):
             chatbot_ai.process_pdf(pdf_bytes, additional_context=whatsapp_context,
                                              reservation_data=reservation_data)
             data = chatbot_ai.answer_question(translated_text)
+            if lang=='ar':
+                print("in lang arabic ",lang)
+                answer = self.enforce_ltr_numbers(data)
+                data = answer
+            print("answer", data)
             gc.collect()
             print("data---after gc", chatbot_ai)
             # field_info = self.fields_get(['answer_status'])
@@ -147,14 +162,13 @@ class Hotel(models.Model):
                                  "I don’t have access to that knowledge", "don't have enough information", "I am an AI"]
             for sentence in uncertain_phrases:
                 sentence_lower = sentence.lower()
-                if data['Answer'].lower() == sentence_lower or data[
-                    'Answer'].lower() in sentence_lower or sentence_lower in data['Answer'].lower():
+                if data.lower() == sentence_lower or data.lower() in sentence_lower or sentence_lower in data.lower():
                     # life_agent = self.env['life.agent'].create({
                     # 	'question': asked_question,
                     # 	'state': 'waiting'
                     # })
                     # self.asked_life_agent(asked_question)
-                    data['Answer'] = "please wait for life agent will reply to you"
+                    data = "please wait for life agent will reply to you"
 
                     answer_s = self.answer_status = 'life_agent'
                     is_life_agent = True
@@ -164,39 +178,47 @@ class Hotel(models.Model):
             print("in if any")
             answer_stat = answer_s
             print("answer_stat", answer_stat)
-            if lang['language'] != 'en':
+            if lang != 'en':
                 print("in if not english else")
                 # translator = Translator()
                 # translated_text_answer = translator.translate(data["Answer"], lang['language'], True)
-                translated_text_answer = chatbot_ai.detect_and_translate(data["Answer"],
-                                                                         target_language=lang['language'])
+                translated_text_answer = chatbot_ai.detect_and_translate(data,
+                                                                         target_language=lang)
 
                 print("translated_text_answer before", translated_text_answer)
                 translated_text_answer = self.env["hotel.translation.rules"].replace_words(translated_text_answer,
-                                                                                           lang['language'])
+                                                                                           lang)
                 print("translated_text_answer after", translated_text_answer)
                 if "+20" in  translated_text_answer:
                     format_phone_number(translated_text_answer)
             else:
-                translated_text_answer = data["Answer"]
+                translated_text_answer = data
                 translated_text_answer = self.env["hotel.translation.rules"].replace_words(translated_text_answer, "en")
 
                 print("translated_text_answer", translated_text_answer)
             self.env["question_answer"].create({
-                "question": data["Question"],
-                "answer": data["Answer"],
-                "cost": data["Cost"],
+                "question": translated_text,
+                "answer": data,
+                "cost": 0.03,
                 "number_of_calls": 1,
                 "answer_status": answer_s,
                 "check_life_agent": is_life_agent
             })
             if reservation:
-                data = data["Question"] + " -> " + data["Answer"]
+                data = translated_text + " -> " + data
                 if partner_obj:
                     partner_obj.create_lead(data)
 
         return translated_text_answer, answer_stat
 
+    def enforce_ltr_numbers(self,text):
+        phone_pattern = r"(\(\+\d{1,3}\)\s?\d+(\s?\d+)*)"
+        def add_ltr_marks(match):
+            return f"\u200E{match.group(0)}\u200E"
+
+        formatted_text = re.sub(phone_pattern, add_ltr_marks, text)
+
+        return formatted_text
     def get_rooms_data(self):
         fields = ["display_name", "occupancy", "meal_type", "date_from", "date_to", "rate_egp", "rate_usd"]
         rates = self.env["hotel.room.rate"].search([]).read(fields)
@@ -209,7 +231,7 @@ class Hotel(models.Model):
 
         # rooms_text="\n".join([format_row(room) for room in rooms])
         # all_text= reservation_text  + "\n" + rules_text + "\n" + rooms_text
-        print("all_text", text_return)
+        # print("all_text", text_return)
         return text_return
 
     def check_reservation_text(self, given_text):

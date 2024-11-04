@@ -23,6 +23,9 @@ class ReservationLead(models.Model):
         html_content="<ul>"
         for category,value in list_reservation.items():
             print(f"category: {category}, value: {value}")
+            not_found = '"Not found",'
+            if value.lower() == not_found.lower() or value.lower() in not_found.lower():
+                continue
             html_content+=f"<li><h3><strong>{category.replace("_"," ").title()} </strong> : {value}</h3></li>"
         html_content+=f"</ul>"
 
