@@ -53,7 +53,7 @@ class PDFQuestionAnswerer:
     def detect_language(self,text):
         try:
             response = self.client.chat.completions.create(
-                model=gpt_models[0],
+                model=gpt_models[1],
                 messages=[
                     {
                         "role": "system",
@@ -82,7 +82,7 @@ class PDFQuestionAnswerer:
 
         # client = Openai(api_key=self.openai_api_key)
         response = self.client.chat.completions.create(
-            model=gpt_models[0],
+            model=gpt_models[1],
             # engine="text-davinci-004",  # You can use other engines as well, like gpt-4 if available.
             messages=[
                 {"role": "system",
@@ -144,14 +144,14 @@ class PDFQuestionAnswerer:
             user_content= f"""Question: {question}"""
 
             response = self.client.chat.completions.create(
-                model=gpt_models[0],
+                model=gpt_models[1],
                 messages=[
                     {"role": "system",
                      "content": system_content},
                     {"role": "user", "content": user_content}
                 ],
                 temperature=0.7,
-                max_tokens=300
+                max_tokens=400
             )
 
             return response.choices[0].message.content.strip()
