@@ -24,7 +24,10 @@ from openai import OpenAI as Openai
 # from pdfminer.high_level import extract_text_to_fp
 # from pdfminer.layout import LAParams
 models=["text-embedding-3-small","text-embedding-ada-002","text-embedding-3-large"]
+gpt_models=["gpt-3.5-turbo","gpt-4o"]
+
 class PDFQuestionAnswerer:
+
 
     # todo
     # _instance = None  # Class attribute to store the single instance
@@ -50,7 +53,7 @@ class PDFQuestionAnswerer:
     def detect_language(self,text):
         try:
             response = self.client.chat.completions.create(
-                model="gpt-3.5-turbo",
+                model=gpt_models[0],
                 messages=[
                     {
                         "role": "system",
@@ -79,7 +82,7 @@ class PDFQuestionAnswerer:
 
         # client = Openai(api_key=self.openai_api_key)
         response = self.client.chat.completions.create(
-            model="gpt-4o",
+            model=gpt_models[0],
             # engine="text-davinci-004",  # You can use other engines as well, like gpt-4 if available.
             messages=[
                 {"role": "system",
@@ -141,14 +144,14 @@ class PDFQuestionAnswerer:
             user_content= f"""Question: {question}"""
 
             response = self.client.chat.completions.create(
-                model="gpt-4",
+                model=gpt_models[0],
                 messages=[
                     {"role": "system",
                      "content": system_content},
                     {"role": "user", "content": user_content}
                 ],
                 temperature=0.7,
-                max_tokens=500
+                max_tokens=300
             )
 
             return response.choices[0].message.content.strip()
