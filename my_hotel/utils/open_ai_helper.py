@@ -129,10 +129,10 @@ class PDFQuestionAnswerer:
             if self.reservation_data:
                 full_context += f"Reservation Data:\n{json.dumps(self.reservation_data, indent=2)}\n\n"
 
-            system_content = f"""Please answer the question accurately based on the numbers given in question,
+            system_content = f"""Please answer the question accurately and shortly based on the numbers given in question,
                     you can say , I am not sure or I don't know, please use short answers and answer briefly
-                    if the answer contain phone numbers please format it correctly and put each phone number in seprate line. 
-                    please reply in a very polite and friendly way and use capital letters in the beginning of the sentence the answer can be bold  on titles, please follow all the grammer rules , 
+                    if the answer contain phone numbers please format it correctly and put each phone number in separate line . please format the answer to be easily read 
+                    reply in a very polite and friendly way and use capital letters in the beginning of the sentence, please follow all the grammer rules , 
                     
                     {full_context}
                     
